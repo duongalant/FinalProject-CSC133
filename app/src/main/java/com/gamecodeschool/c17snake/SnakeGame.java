@@ -12,6 +12,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -90,6 +91,8 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         } catch (IOException e) {
             // Error
+            // Log the error or display an error message
+            Log.e("SnakeGame", "Error loading sound files: " + e.getMessage());
         }
 
         // Initialize the drawing objects
@@ -130,7 +133,8 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple.spawn();
 
         // reset the snake
-        mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+        //CODE SMELL Redundant code
+        //mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
 
         // Reset the mScore
         mScore = 0;
