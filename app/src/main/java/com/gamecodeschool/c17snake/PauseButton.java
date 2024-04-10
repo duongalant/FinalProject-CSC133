@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.MotionEvent;
 
 public class PauseButton {
 
@@ -26,7 +27,16 @@ public class PauseButton {
         canvas.drawRect(buttonRect.right - 40, buttonRect.top + 20, buttonRect.right - 20, buttonRect.bottom - 20, paint);
     }
 
+    /*
     public Rect getButtonRect() {
         return buttonRect;
+    }
+    */
+
+    public boolean buttonRange(MotionEvent motionEvent){
+        int touchX = (int) motionEvent.getX();
+        int touchY = (int) motionEvent.getY();
+
+        return buttonRect.contains(touchX, touchY);
     }
 }
