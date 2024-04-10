@@ -1,7 +1,7 @@
 # SnakeGame-CSC133-
 
 # Collaborators:
-# Kenny Anh
+# Kenny Ahn
 # Alan Duong
 # Taekjin Jung
 # David Pham
