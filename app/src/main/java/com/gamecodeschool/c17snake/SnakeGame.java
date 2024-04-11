@@ -44,7 +44,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // How many points does the player have
     private int mScore;
-    private int maxScore = 3;
+    private int maxScore = 5;
 
     // Objects for drawing
     private Canvas mCanvas;

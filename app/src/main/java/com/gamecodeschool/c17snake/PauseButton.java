@@ -33,6 +33,7 @@ public class PauseButton {
     }
     */
 
+    //check if the player is clicking the button
     public boolean buttonRange(MotionEvent motionEvent){
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();
