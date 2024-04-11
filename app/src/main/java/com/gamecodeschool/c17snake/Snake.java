@@ -195,19 +195,19 @@ class Snake extends GameObject implements InSnake {
             // Draw the head
             switch (heading) {
                 case RIGHT:
-                    drawHead(canvas, paint, 0);     //right
+                    draw(canvas, paint, 0);     //right
                     break;
 
                 case LEFT:
-                    drawHead(canvas, paint, 1);     //left
+                    draw(canvas, paint, 1);     //left
                     break;
 
                 case UP:
-                    drawHead(canvas, paint, 2);     //up
+                    draw(canvas, paint, 2);     //up
                     break;
 
                 case DOWN:
-                    drawHead(canvas, paint, 3);     //down
+                    draw(canvas, paint, 3);     //down
                     break;
             }
 
@@ -221,7 +221,7 @@ class Snake extends GameObject implements InSnake {
             }
         }
     }
-    private void drawHead(Canvas canvas, Paint paint, int direction){   //0 = right, 1 = left, 2=up, 3=down
+    private void draw(Canvas canvas, Paint paint, int direction){   //0 = right, 1 = left, 2=up, 3=down
         canvas.drawBitmap(mBitmapHeads.get(direction),
                 segmentLocations.get(0).x
                         * mSegmentSize,
