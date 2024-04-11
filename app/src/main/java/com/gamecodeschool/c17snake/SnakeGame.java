@@ -27,6 +27,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private volatile boolean mPlaying = false;
     private volatile boolean mPaused = true;
     private volatile boolean gotReset = true;
+    private volatile boolean winner = false;
 
     // for playing sound effects
     private SoundPool mSP;
@@ -39,6 +40,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // How many points does the player have
     private int mScore;
+    private int maxScore = 3;
 
     // Objects for drawing
     private Canvas mCanvas;
@@ -198,6 +200,12 @@ class SnakeGame extends SurfaceView implements Runnable {
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
         }
 
+        if(mScore == maxScore){
+            mPaused =true;
+            gotReset = true;
+            winner = true;
+        }
+
         // Did the snake die?
         if (mSnake.detectDeath()) {
             // Pause the game ready to start again
@@ -251,6 +259,12 @@ class SnakeGame extends SurfaceView implements Runnable {
                 if(!gotReset){
                     // Draw pause instruction
                     mCanvas.drawText("Click to resume", 1325, 525, mPaint);
+                }else if(winner){
+                    mPaint.setTextSize(120);
+                    mCanvas.drawText(getResources().getString(R.string.for_winner1),
+                            mCanvas.getWidth()/6, mCanvas.getHeight()/3+50, mPaint);
+                    mCanvas.drawText(getResources().getString(R.string.for_winner2),
+                            mCanvas.getWidth()/3, (mCanvas.getWidth()/3)+120, mPaint);
                 }else{
                     // Draw the message
                     // We will give this an international upgrade soon
@@ -281,7 +295,9 @@ class SnakeGame extends SurfaceView implements Runnable {
     }
 
     private boolean validTouch(MotionEvent motionEvent){
-        if (mPaused && gotReset) {  //for new start
+        if(winner){
+            winner = false;
+        }else if (mPaused && gotReset) {  //for new start
             mPaused = false;
             gotReset = false;
             newGame();
