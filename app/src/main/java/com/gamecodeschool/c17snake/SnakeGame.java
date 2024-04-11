@@ -37,6 +37,10 @@ class SnakeGame extends SurfaceView implements Runnable {
     // The size in segments of the playable area
     private final int NUM_BLOCKS_WIDE = 40;
     private int mNumBlocksHigh;
+    private int mBlockSize;
+
+    //get the screen range
+    private Point mScreenRange;
 
     // How many points does the player have
     private int mScore;
@@ -61,10 +65,37 @@ class SnakeGame extends SurfaceView implements Runnable {
         super(context);
 
         // Work out how many pixels each block is
-        int blockSize = size.x / NUM_BLOCKS_WIDE;
+        mBlockSize = size.x / NUM_BLOCKS_WIDE;
         // How many blocks of the same size will fit into the height
-        mNumBlocksHigh = size.y / blockSize;
+        mNumBlocksHigh = size.y / mBlockSize;
 
+        setSounds(context);
+        setObjects(context, size);
+    }
+
+    private void setObjects(Context context, Point size){
+        // Initialize the drawing objects
+        mSurfaceHolder = getHolder();
+        mPaint = new Paint();
+        mAtariFont = ResourcesCompat.getFont(getContext(), R.font.atariclassic);
+
+        mScreenRange = new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+        // Call the constructors of our two game objects
+        mApple = new Apple(context, mScreenRange, mBlockSize);
+        mSnake = new Snake(context, mScreenRange, mBlockSize);
+
+        // Calculate button size and position
+        int buttonSize = 100;
+        int buttonLeft = size.x - buttonSize - 20; // Adjust position as needed
+        int buttonTop = 450; // Adjust position as needed
+        int buttonRight = buttonLeft + buttonSize;
+        int buttonBottom = buttonTop + buttonSize;
+
+        // Create the pause button
+        pauseButton = new PauseButton(buttonLeft, buttonTop, buttonRight, buttonBottom);
+    }
+
+    private void setSounds(Context context){
         // Initialize the SoundPool
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -93,32 +124,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         } catch (IOException e) {
             // Error
         }
-
-        // Initialize the drawing objects
-        mSurfaceHolder = getHolder();
-        mPaint = new Paint();
-        mAtariFont = ResourcesCompat.getFont(getContext(), R.font.atariclassic);
-
-        // Call the constructors of our two game objects
-        mApple = new Apple(context,
-                new Point(NUM_BLOCKS_WIDE,
-                        mNumBlocksHigh),
-                blockSize);
-
-        mSnake = new Snake(context,
-                new Point(NUM_BLOCKS_WIDE,
-                        mNumBlocksHigh),
-                blockSize);
-        // Calculate button size and position
-        int buttonSize = 100;
-        int buttonLeft = size.x - buttonSize - 20; // Adjust position as needed
-        int buttonTop = 450; // Adjust position as needed
-        int buttonRight = buttonLeft + buttonSize;
-        int buttonBottom = buttonTop + buttonSize;
-
-        // Create the pause button
-        pauseButton = new PauseButton(buttonLeft, buttonTop, buttonRight, buttonBottom);
-
     }
 
 
@@ -219,7 +224,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
 
     // Do all the drawing
-    public void draw() {
+    public void draw() {    //we can make start page, in-game page
         // Get a lock on the mCanvas
         if (mSurfaceHolder.getSurface().isValid()) {
             mCanvas = mSurfaceHolder.lockCanvas();
@@ -246,7 +251,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Draw some text while paused
             if(mPaused){
                 // Set the size and color of the mPaint for the text
-                mPaint.setColor(Color.argb(255, 255, 255, 255));
+                //mPaint.setColor(Color.argb(255, 255, 255, 255));  //redundancy
 
                 // Draw our names
                 mPaint.setTextSize(50);

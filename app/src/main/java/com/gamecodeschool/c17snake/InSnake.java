@@ -16,7 +16,6 @@ public interface InSnake {
         return false;
     }
 
-    //check collision for whole snake
     public static boolean checkSpot(ArrayList<Point> segmentLocations, Point objLocation,int c) {
         for (int i = segmentLocations.size() - 1; i > c; i--) {
             // Have any of the sections collided
