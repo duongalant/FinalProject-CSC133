@@ -8,15 +8,16 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-class Apple extends GameObject implements ISpawnable{
+public class Rock extends GameObject implements ISpawnable {
     // The range of values we can choose from
-    // to spawn an apple
+    // to spawn a rock
 
-    private boolean friendly = true;
+    private boolean friendly = false;
     private Point mSpawnRange;
     Random random;
-    /// Set up the apple in the constructor
-    Apple(Context context, Point sr, int s){
+
+    /// Set up the rock in the constructor
+    Rock(Context context, Point sr, int s){
         random = new Random();
 
         // Make a note of the passed in spawn range
@@ -27,7 +28,7 @@ class Apple extends GameObject implements ISpawnable{
         location.x = -10;
 
         // Load the image to the bitmap
-        mBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        mBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.rock);
 
         // Resize the bitmap
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
@@ -52,8 +53,7 @@ class Apple extends GameObject implements ISpawnable{
     public boolean isFriendly(){
         return friendly;
     }
-
-    public int benefit(int mScore){
-        return mScore += 1;
+    public int penalty(int mScore){
+        return mScore -= 1;
     }
 }
