@@ -16,5 +16,4 @@ public interface ISpawnable {
     void resetPosition();
 
     boolean isFriendly();
-
 }
