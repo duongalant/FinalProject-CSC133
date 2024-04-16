@@ -12,6 +12,7 @@ public class ControlButton {
 
     public ControlButton(int left, int top, int right, int bottom) {
         buttonRect = new Rect(left, top, right, bottom);
+
     }
 
     public void draw(Canvas canvas, Paint paint) {

@@ -57,7 +57,6 @@ class SnakeGame extends SurfaceView implements Runnable {
     // And an apple
     private Apple mApple;
     private PauseButton pauseButton;
-
     private ControlButton controlButton;
     private UpButton upButton;
     private DownButton downButton;
@@ -90,14 +89,14 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
 
-        // Calculate button size and up,down,right,left position
-        int controlButtonSize = 375;
+        // Calculate button size and position
         int buttonSize = 100;
+        int controlButtonSize = 375;
 
-        int pauseButtonLeft = size.x - buttonSize - 20; // Adjust position as needed
-        int pauseButtonTop = 450; // Adjust position as needed
-        int pauseButtonRight = pauseButtonLeft + buttonSize;
-        int pauseButtonBottom = pauseButtonTop + buttonSize;
+        int buttonLeft = size.x - buttonSize - 20; // Adjust position as needed
+        int buttonTop = 450; // Adjust position as needed
+        int buttonRight = buttonLeft + buttonSize;
+        int buttonBottom = buttonTop + buttonSize;
 
         int controlButtonLeft = 20; // Adjust position as needed
         int controlButtonTop = 1025; // Adjust position as needed
@@ -125,7 +124,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         int leftButtonBottom = leftButtonTop + buttonSize;
 
         // Create the pause button
-        pauseButton = new PauseButton(pauseButtonLeft, pauseButtonTop, pauseButtonRight, pauseButtonBottom);
+        pauseButton = new PauseButton(buttonLeft, buttonTop, buttonRight, buttonBottom);
 
         // Create the control button
         controlButton = new ControlButton(controlButtonLeft, controlButtonTop, controlButtonRight, controlButtonBottom);
@@ -133,7 +132,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         downButton = new DownButton(downButtonLeft, downButtonTop, downButtonRight, downButtonBottom);
         rightButton = new RightButton(rightButtonLeft, rightButtonTop, rightButtonRight, rightButtonBottom);
         leftButton = new LeftButton(leftButtonLeft, leftButtonTop, leftButtonRight, leftButtonBottom);
-
     }
 
     private void setSounds(Context context){
@@ -286,15 +284,15 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
 
-            // Draw the pause button
-            pauseButton.draw(mCanvas, mPaint);
-
             // Draw the control button
             controlButton.draw(mCanvas, mPaint);
+
             upButton.draw(mCanvas, mPaint);
             downButton.draw(mCanvas, mPaint);
-            rightButton.draw(mCanvas, mPaint);
             leftButton.draw(mCanvas, mPaint);
+            rightButton.draw(mCanvas, mPaint);
+            // Draw the pause button
+            pauseButton.draw(mCanvas, mPaint);
 
             // Draw some text while paused
             if(mPaused){

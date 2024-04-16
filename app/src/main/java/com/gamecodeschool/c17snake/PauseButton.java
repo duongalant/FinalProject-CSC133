@@ -29,6 +29,7 @@ public class PauseButton {
 
 
     public Rect getButtonRect() {
+
         return buttonRect;
     }
 

@@ -45,6 +45,12 @@ class Snake extends GameObject implements InSnake {
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
+    private UpButton upButton;
+    private DownButton downButton;
+    private LeftButton leftButton;
+    private RightButton rightButton;
+
+
 
     Snake(Context context, Point mr, int ss) {
 
@@ -70,6 +76,11 @@ class Snake extends GameObject implements InSnake {
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+
+        upButton = new UpButton(155, 1040,255,1140);
+        downButton = new DownButton(155,1285,255,1385);
+        rightButton = new RightButton(265,1160,365,1260);
+        leftButton = new LeftButton(50,1160,150,1260);
     }
     private void createHead(Context context, int ss){
         mBitmapHeads = new ArrayList<>();
@@ -109,7 +120,6 @@ class Snake extends GameObject implements InSnake {
         // Start with a single snake segment
         segmentLocations.add(new Point(w / 2, h / 2));
     }
-
 
     void move() {
         // Move the body
@@ -232,16 +242,43 @@ class Snake extends GameObject implements InSnake {
 
     // Handle changing direction
     void switchHeading(MotionEvent motionEvent) {
+        float x = motionEvent.getX();
+        float y = motionEvent.getY();
 
-        // Is the tap on the right hand side?
         if (motionEvent.getX() >= halfWayPoint) {
             rotateRight();
         } else {
             // Rotate left
             rotateLeft();
         }
+
+        if (upButton.contains(x, y)) {
+            rotateUp();
+        } else if (downButton.contains(x, y)) {
+            rotateDown();
+        } else if (leftButton.contains(x, y)) {
+            rotateLeft();
+        } else if (rightButton.contains(x, y)) {
+            rotateRight();
+        }
+    }
+    private void rotateUp() {
+        if (heading != Heading.DOWN) {
+            heading = Heading.UP;
+        }
+
+    }
+    private void rotateDown(){
+        if (heading != Heading.UP) {
+            heading = Heading.DOWN;
+        }
+
     }
     private void rotateRight() {
+
+        if (heading !=Heading.LEFT){
+            heading = Heading.RIGHT;
+       }
         switch (heading) {
             // Rotate right
             case UP:
@@ -260,6 +297,9 @@ class Snake extends GameObject implements InSnake {
         }
     }
     private void rotateLeft() {
+        if (heading !=Heading.RIGHT){
+            //heading = Heading.LEFT;
+        }
         switch (heading) {
             case UP:
                 heading = Heading.LEFT;
