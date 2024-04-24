@@ -10,7 +10,7 @@ import android.view.Display;
 public class SnakeActivity extends Activity {
     // Declare an instance of SnakeGame
     SnakeGame mSnakeGame;
-    MediaPlayer bg;
+    MediaPlayer background;
 
     // Set the game up
     @Override
@@ -18,9 +18,9 @@ public class SnakeActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        bg = MediaPlayer.create(SnakeActivity.this, R.raw.background);
-        bg.setLooping(true);
-        bg.start();
+        background = MediaPlayer.create(SnakeActivity.this, R.raw.bitmusic);
+        background.setLooping(true);
+        background.start();
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
@@ -34,11 +34,7 @@ public class SnakeActivity extends Activity {
 
         // Make snakeEngine the view of the Activity
         setContentView(mSnakeGame);
-
     }
-
-
-
 
     // Start the thread in snakeEngine
     @Override
@@ -52,7 +48,7 @@ public class SnakeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mSnakeGame.pause();
-        bg.release();
+        background.release();
         finish();
     }
 }
