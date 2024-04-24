@@ -33,7 +33,6 @@ public class SnakeActivity extends Activity {
     protected void onResume() {
         super.onResume();
         mSnakeGame.resume();
-        finish();
     }
 
     // Stop the thread in snakeEngine
