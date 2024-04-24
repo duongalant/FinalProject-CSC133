@@ -25,6 +25,7 @@ class Snake extends GameObject {
     // Where is the centre of the screen
     // horizontally in pixels?
     private int halfWayPoint;
+    private boolean dead = false;
 
     // For tracking movement Heading
     private enum Heading {
@@ -99,7 +100,7 @@ class Snake extends GameObject {
 
     // Get the snake ready for a new game
     void reset(int w, int h) {
-
+        dead = false;
         // Reset the heading
         heading = Heading.RIGHT;
 
@@ -152,8 +153,6 @@ class Snake extends GameObject {
 
     boolean detectDeath() {
         // Has the snake died?
-        boolean dead = false;
-
         boolean overLeft = segmentLocations.get(0).x <= -1;
         boolean overRight = segmentLocations.get(0).x > mMoveRange.x;
         boolean overTop = segmentLocations.get(0).y <= -1;
@@ -168,9 +167,6 @@ class Snake extends GameObject {
         if(InSnake.checkSpot(segmentLocations, segmentLocations.get(0))) dead = true;
 
         return dead;
-    }
-    boolean detectDeath(int mScore){
-        return mScore < 0;
     }
 
     boolean checkDinner(Point l) {
@@ -189,12 +185,25 @@ class Snake extends GameObject {
         return false;
     }
 
+    boolean checkSugar(Point l) {
+        //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+
+            segmentLocations.add(new Point(-10, -10));
+            return true;
+        }
+        return false;
+    }
+
     boolean checkEnemy(Point l){
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
 
             if(segmentLocations.size() > 1){
                 segmentLocations.remove(segmentLocations.size()-1);
+            }else{
+                dead = true;
             }
             return true;
         }

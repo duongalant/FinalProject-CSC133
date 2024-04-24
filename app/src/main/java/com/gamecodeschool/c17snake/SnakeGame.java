@@ -46,7 +46,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // How many points does the player have
     private int mScore;
-    private int maxScore = 5;
+    private int maxScore = 100;
 
     // Objects for drawing
     private Canvas mCanvas;
@@ -59,6 +59,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     // And an apple
     private Apple mApple;
     private Rock mRock;
+    private Sugar mSugar;
     private PauseButton pauseButton;
 
 
@@ -87,6 +88,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mRock = new Rock(context, mScreenRange, mBlockSize);
+        mSugar = new Sugar(context, mScreenRange, mBlockSize);
 
         // Calculate button size and position
         int buttonSize = 100;
@@ -140,6 +142,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Get the apple ready for dinner
         mApple.spawn();
         mRock.spawn();
+        mSugar.spawn();
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -147,7 +150,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Reset the mScore
         mScore = 0;
 
-        // Setup mNextFrameTime so an update can triggered
+        // Setup mNextFrameTime so an update can triggeredde
         mNextFrameTime = System.currentTimeMillis();
     }
 
@@ -205,6 +208,11 @@ class SnakeGame extends SurfaceView implements Runnable {
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
         }
 
+        if(mSnake.checkSugar(mSugar.getLocation())){
+            mSugar.spawn(mSnake.segmentLocations);
+            mScore = mSugar.benefit(mScore);
+        }
+
         if(mSnake.checkEnemy(mRock.getLocation())){
             mRock.spawn(mSnake.segmentLocations);
             mScore = mRock.penalty(mScore);
@@ -217,7 +225,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
 
         // Did the snake die?
-        if (mSnake.detectDeath() || mSnake.detectDeath(mScore)) {
+        if (mSnake.detectDeath()) {
             // Pause the game ready to start again
             mSP.play(mCrashID, 1, 1, 0, 0, 1);
 
@@ -261,12 +269,17 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
+            //(mNextFrameTime%x)/y      //x is for the max time, y is for displaying max time
+            mCanvas.drawText("Time: " + (int)(mNextFrameTime%5000)/1000, 20, 220, mPaint);
 
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
 
+            if(mSugar.spawnTimer((int)(mNextFrameTime%5000)/1000,mSnake.segmentLocations)){
+                mSugar.draw(mCanvas, mPaint);
+            }
             // Draw the pause button
             pauseButton.draw(mCanvas, mPaint);
 
