@@ -52,7 +52,6 @@ public class SnakeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mSnakeGame.pause();
-        bg.release();
-        finish();
+       
     }
 }
