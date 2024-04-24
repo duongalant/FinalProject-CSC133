@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-class Snake extends GameObject implements InSnake {
+class Snake extends GameObject {
 
     // The location in the grid of all the segments
     public ArrayList<Point> segmentLocations;
@@ -179,6 +179,9 @@ class Snake extends GameObject implements InSnake {
 
         return dead;
     }
+    boolean detectDeath(int mScore){
+        return mScore < 0;
+    }
 
     boolean checkDinner(Point l) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
@@ -191,6 +194,18 @@ class Snake extends GameObject implements InSnake {
             // move it will take the position of
             // the segment in front of it
             segmentLocations.add(new Point(-10, -10));
+            return true;
+        }
+        return false;
+    }
+
+    boolean checkEnemy(Point l){
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+
+            if(segmentLocations.size() > 1){
+                segmentLocations.remove(segmentLocations.size()-1);
+            }
             return true;
         }
         return false;
