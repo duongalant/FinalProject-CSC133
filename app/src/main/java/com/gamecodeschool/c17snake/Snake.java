@@ -245,12 +245,6 @@ class Snake extends GameObject implements InSnake {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
 
-        if (motionEvent.getX() >= halfWayPoint) {
-            rotateRight();
-        } else {
-            // Rotate left
-            rotateLeft();
-        }
 
         if (upButton.contains(x, y)) {
             rotateUp();
@@ -279,40 +273,12 @@ class Snake extends GameObject implements InSnake {
         if (heading !=Heading.LEFT){
             heading = Heading.RIGHT;
        }
-        switch (heading) {
-            // Rotate right
-            case UP:
-                heading = Heading.RIGHT;
-                break;
-            case RIGHT:
-                heading = Heading.DOWN;
-                break;
-            case DOWN:
-                heading = Heading.LEFT;
-                break;
-            case LEFT:
-                heading = Heading.UP;
-                break;
+
+    }
+    private void rotateLeft() {
+        if (heading !=Heading.RIGHT) {
+            heading = Heading.LEFT;
+        }
 
         }
     }
-    private void rotateLeft() {
-        if (heading !=Heading.RIGHT){
-            //heading = Heading.LEFT;
-        }
-        switch (heading) {
-            case UP:
-                heading = Heading.LEFT;
-                break;
-            case LEFT:
-                heading = Heading.DOWN;
-                break;
-            case DOWN:
-                heading = Heading.RIGHT;
-                break;
-            case RIGHT:
-                heading = Heading.UP;
-                break;
-        }
-    }
-}
