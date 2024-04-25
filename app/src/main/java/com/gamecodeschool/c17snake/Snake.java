@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -34,12 +35,6 @@ class Snake extends GameObject {
 
     // Start by heading to the right
     private Heading heading = Heading.RIGHT;
-
-    // A bitmap for each direction the head can face
-    private Bitmap mBitmapHeadRight;
-    private Bitmap mBitmapHeadLeft;
-    private Bitmap mBitmapHeadUp;
-    private Bitmap mBitmapHeadDown;
 
     // A bitmap for each direction the head can face
     private ArrayList<Bitmap> mBitmapHeads;
@@ -191,6 +186,7 @@ class Snake extends GameObject {
                 segmentLocations.get(0).y == l.y) {
 
             segmentLocations.add(new Point(-10, -10));
+
             return true;
         }
         return false;

@@ -61,6 +61,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private Rock mRock;
     private Sugar mSugar;
     private PauseButton pauseButton;
+    private boolean executeSugar = true;
 
 
     // This is the constructor method that gets called
@@ -209,7 +210,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
 
         if(mSnake.checkSugar(mSugar.getLocation())){
-            mSugar.spawn(mSnake.segmentLocations);
             mScore = mSugar.benefit(mScore);
         }
 
@@ -270,16 +270,21 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
             //(mNextFrameTime%x)/y      //x is for the max time, y is for displaying max time
-            mCanvas.drawText("Time: " + (int)(mNextFrameTime%5000)/1000, 20, 220, mPaint);
+            mCanvas.drawText("Time: " + ((int)(mNextFrameTime%5000)/1000), 20, 220, mPaint);
 
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
+            mSugar.draw(mCanvas, mPaint);
 
-            if(mSugar.spawnTimer((int)(mNextFrameTime%5000)/1000,mSnake.segmentLocations)){
-                mSugar.draw(mCanvas, mPaint);
+            //when it hits the timer, it runs the method only once
+            if(((int)(mNextFrameTime%5000)/1000) == 0 && executeSugar) {
+                executeSugar = mSugar.checkSpawn(mSnake.segmentLocations, mCanvas, mPaint);
+            }else if(((int)(mNextFrameTime%5000)/1000) == 1){
+                executeSugar = true;
             }
+
             // Draw the pause button
             pauseButton.draw(mCanvas, mPaint);
 
