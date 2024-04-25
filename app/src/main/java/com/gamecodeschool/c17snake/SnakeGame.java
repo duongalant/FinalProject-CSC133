@@ -403,8 +403,6 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Error
         }
     }
-
-
     // Start the thread
     public void resume() {
         mPlaying = true;
