@@ -6,14 +6,14 @@ import android.graphics.Paint;
 import android.graphics.Point;
 
 public class GameObject {
-    public Point location = new Point();
+    protected Point location = new Point();
 
     public int mSize;
 
     // An image to represent the object
     public Bitmap mBitmap;
 
-    Point getLocation(){
+    public Point getLocation(){
         return location;
     }
 
