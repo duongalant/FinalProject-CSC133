@@ -59,6 +59,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     // And an apple
     private Apple mApple;
     private Rock mRock;
+    private Mole mMole;
     private PauseButton pauseButton;
     private ControlButton controlButton;
     private UpButton upButton;
@@ -92,6 +93,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mRock = new Rock(context, mScreenRange, mBlockSize);
+        mMole = new Mole(context, mScreenRange, mBlockSize);
 
         // Calculate button size and position
         int buttonSize = 100;
@@ -179,6 +181,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Get the apple ready for dinner
         mApple.spawn();
         mRock.spawn();
+        mMole.spawn();
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -248,6 +251,11 @@ class SnakeGame extends SurfaceView implements Runnable {
             mRock.spawn(mSnake.segmentLocations);
             mScore = mRock.penalty(mScore);
         }
+        if(mSnake.checkEnemy(mMole.getLocation())){
+            mMole.spawn(mSnake.segmentLocations);
+            mScore = mMole.penalty(mScore);
+
+        }
 
         if(mScore == maxScore){
             mPaused =true;
@@ -305,6 +313,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
+            mMole.draw(mCanvas, mPaint);
 
             // Draw the control button
             controlButton.draw(mCanvas, mPaint);
