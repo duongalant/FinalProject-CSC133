@@ -37,6 +37,12 @@ class Snake extends GameObject {
     private Heading heading = Heading.RIGHT;
 
     // A bitmap for each direction the head can face
+    private Bitmap mBitmapHeadRight;
+    private Bitmap mBitmapHeadLeft;
+    private Bitmap mBitmapHeadUp;
+    private Bitmap mBitmapHeadDown;
+
+    // A bitmap for each direction the head can face
     private ArrayList<Bitmap> mBitmapHeads;
     // A bitmap for the body
     private Bitmap mBitmapBody;
@@ -186,7 +192,6 @@ class Snake extends GameObject {
                 segmentLocations.get(0).y == l.y) {
 
             segmentLocations.add(new Point(-10, -10));
-
             return true;
         }
         return false;
