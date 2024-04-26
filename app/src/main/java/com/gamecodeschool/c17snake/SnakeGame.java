@@ -17,6 +17,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.core.content.res.ResourcesCompat;
 import java.io.IOException;
+import java.util.ArrayList;
 
 class SnakeGame extends SurfaceView implements Runnable {
     // Objects for the game loop/thread
@@ -58,7 +59,13 @@ class SnakeGame extends SurfaceView implements Runnable {
     // And an apple
     private Apple mApple;
     private Rock mRock;
+    private Mole mMole;
     private PauseButton pauseButton;
+    private ControlButton controlButton;
+    private UpButton upButton;
+    private DownButton downButton;
+    private RightButton rightButton;
+    private LeftButton leftButton;
     private ExitButton exitButton;
 
     // This is the constructor method that gets called
@@ -86,16 +93,53 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mRock = new Rock(context, mScreenRange, mBlockSize);
+        mMole = new Mole(context, mScreenRange, mBlockSize);
 
         // Calculate button size and position
         int buttonSize = 100;
+        int controlButtonSize = 375;
+
         int buttonLeft = size.x - buttonSize - 20; // Adjust position as needed
         int buttonTop = 450; // Adjust position as needed
         int buttonRight = buttonLeft + buttonSize;
         int buttonBottom = buttonTop + buttonSize;
 
+        int controlButtonLeft = 20; // Adjust position as needed
+        int controlButtonTop = 1025; // Adjust position as needed
+        int controlButtonRight = controlButtonLeft + controlButtonSize;
+        int controlButtonBottom = controlButtonTop + controlButtonSize;
+
+        int upButtonLeft = 155;
+        int upButtonTop = 1040; // Adjust position as needed
+        int upButtonRight = upButtonLeft + buttonSize;
+        int upButtonBottom = upButtonTop + buttonSize;
+
+        int downButtonLeft = 155;
+        int downButtonTop = 1285; // Adjust position as needed
+        int downButtonRight = downButtonLeft + buttonSize;
+        int downButtonBottom = downButtonTop + buttonSize;
+
+        int rightButtonLeft = 265;
+        int rightButtonTop = 1160; // Adjust position as needed
+        int rightButtonRight = rightButtonLeft + buttonSize;
+        int rightButtonBottom = rightButtonTop + buttonSize;
+
+        int leftButtonLeft = 50;
+        int leftButtonTop = 1160; // Adjust position as needed
+        int leftButtonRight = leftButtonLeft + buttonSize;
+        int leftButtonBottom = leftButtonTop + buttonSize;
+
         // Create the pause button
         pauseButton = new PauseButton(buttonLeft, buttonTop, buttonRight, buttonBottom);
+
+        // Create the control button
+        controlButton = new ControlButton(controlButtonLeft, controlButtonTop, controlButtonRight, controlButtonBottom);
+        upButton = new UpButton(upButtonLeft, upButtonTop, upButtonRight, upButtonBottom);
+        downButton = new DownButton(downButtonLeft, downButtonTop, downButtonRight, downButtonBottom);
+        rightButton = new RightButton(rightButtonLeft, rightButtonTop, rightButtonRight, rightButtonBottom);
+        leftButton = new LeftButton(leftButtonLeft, leftButtonTop, leftButtonRight, leftButtonBottom);
+
+        //Create the exit button
         exitButton = new ExitButton(context);
     }
 
@@ -140,6 +184,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Get the apple ready for dinner
         mApple.spawn();
         mRock.spawn();
+        mMole.spawn();
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -209,12 +254,18 @@ class SnakeGame extends SurfaceView implements Runnable {
             mRock.spawn(mSnake.segmentLocations);
             mScore = mRock.penalty(mScore);
         }
+        if(mSnake.checkEnemy(mMole.getLocation())){
+            mMole.spawn(mSnake.segmentLocations);
+            mScore = mMole.penalty(mScore);
+
+        }
 
         if(mScore == maxScore){
             mPaused =true;
             gotReset = true;
             winner = true;
         }
+
         // Did the snake die?
         if (mSnake.detectDeath() || mSnake.detectDeath(mScore)) {
             // Pause the game ready to start again
@@ -251,8 +302,9 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             // Fill the screen with a color
             mCanvas.drawColor(Color.argb(255, 80, 200, 120));
+
             // Set the size and color of the mPaint for the text
-            mPaint.setColor(Color.argb(255,255,255,255));
+            mPaint.setColor(Color.argb(255, 255, 255, 255));
             mPaint.setTextSize(120);
 
             mPaint.setTypeface(mAtariFont);
@@ -264,7 +316,15 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
+            mMole.draw(mCanvas, mPaint);
 
+            // Draw the control button
+            controlButton.draw(mCanvas, mPaint);
+
+            upButton.draw(mCanvas, mPaint);
+            downButton.draw(mCanvas, mPaint);
+            leftButton.draw(mCanvas, mPaint);
+            rightButton.draw(mCanvas, mPaint);
             // Draw the pause button
             pauseButton.draw(mCanvas, mPaint);
 
@@ -288,7 +348,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             drawingText("David Pham", 1700, 200);
             drawingText("Nancy Zhu", 1700, 250);
 
-            if(!gotReset){
+            if(!gotReset) {
                 // Draw pause instruction
                 drawingText("Click to resume", 1325, 525);
             }else if(winner){
@@ -296,7 +356,7 @@ class SnakeGame extends SurfaceView implements Runnable {
                 drawingText(getResources().getString(R.string.for_winner1), mCanvas.getWidth()/6, mCanvas.getHeight()/3+50);
                 drawingText(getResources().getString(R.string.for_winner2), mCanvas.getWidth()/3, (mCanvas.getWidth()/3)+120);
                 exitButton.draw(mCanvas, mPaint);
-            }else if(dead){
+            }else if(dead) {
                 mPaint.setTextSize(120);
                 drawingText(getResources().getString(R.string.for_loser),
                         mCanvas.getWidth() / 6, 400);
@@ -319,6 +379,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mCanvas.drawText(text, x, y, mPaint);
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
@@ -333,7 +394,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     }
 
     private boolean validTouch(MotionEvent motionEvent){
-        if(winner || dead){
+        if (winner || dead) {
             if (exitButton.buttonRange(motionEvent)) {
                 mPaused = true;
             }
@@ -347,6 +408,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mPaused = false;
             gotReset = false;
             newGame();
+
             return true;
         }else if(!mPaused && pauseButton.buttonRange(motionEvent)){ //to pause button
             mPaused = true;
@@ -354,7 +416,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         }else if(mPaused && pauseButton.buttonRange(motionEvent)){  //to play button
             mPaused = false;
 
-        }else if(!mPaused){                                    //when the game is playing
+        }else if(!mPaused){                                     //when the game is playing
             // Let the Snake class handle the input
             mSnake.switchHeading(motionEvent);
         }
@@ -362,6 +424,8 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Don't want to process snake direction for this tap
         return true;
     }
+
+
     // Stop the thread
     public void pause() {
         mPlaying = false;
@@ -371,7 +435,6 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Error
         }
     }
-
     // Start the thread
     public void resume() {
         mPlaying = true;
