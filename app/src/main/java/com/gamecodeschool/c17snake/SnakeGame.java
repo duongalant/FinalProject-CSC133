@@ -354,7 +354,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         }else if(mPaused && pauseButton.buttonRange(motionEvent)){  //to play button
             mPaused = false;
 
-        }else if(!mPaused){                                     //when the game is playing
+        }else if(!mPaused){                                    //when the game is playing
             // Let the Snake class handle the input
             mSnake.switchHeading(motionEvent);
         }
