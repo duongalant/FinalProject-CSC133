@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -53,6 +54,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private SurfaceHolder mSurfaceHolder;
     private Paint mPaint;
     private Typeface mAtariFont;
+    private Drawable mBackground;
 
     // A snake ssss
     private Snake mSnake;
@@ -80,6 +82,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         setSounds(context);
         setObjects(context, size);
+        mBackground = context.getResources().getDrawable(R.drawable.grass);
     }
 
     private void setObjects(Context context, Point size){
@@ -297,8 +300,9 @@ class SnakeGame extends SurfaceView implements Runnable {
         if (mSurfaceHolder.getSurface().isValid()) {
             mCanvas = mSurfaceHolder.lockCanvas();
 
-            // Fill the screen with a color
-            mCanvas.drawColor(Color.argb(255, 80, 200, 120));
+            // Draw the background image
+            mBackground.setBounds(0, 0, getWidth(), getHeight());
+            mBackground.draw(mCanvas);
 
             // Set the size and color of the mPaint for the text
             mPaint.setColor(Color.argb(255, 255, 255, 255));
