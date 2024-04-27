@@ -3,16 +3,24 @@ package com.gamecodeschool.c17snake;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Window;
+import android.media.MediaPlayer;
 import android.view.Display;
 
 public class SnakeActivity extends Activity {
     // Declare an instance of SnakeGame
     SnakeGame mSnakeGame;
+    MediaPlayer bg;
 
     // Set the game up
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        bg = MediaPlayer.create(SnakeActivity.this, R.raw.background);
+        bg.setLooping(true);
+        bg.start();
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
@@ -26,7 +34,11 @@ public class SnakeActivity extends Activity {
 
         // Make snakeEngine the view of the Activity
         setContentView(mSnakeGame);
+
     }
+
+
+
 
     // Start the thread in snakeEngine
     @Override
@@ -40,5 +52,7 @@ public class SnakeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mSnakeGame.pause();
+        bg.release();
+        finish();
     }
 }

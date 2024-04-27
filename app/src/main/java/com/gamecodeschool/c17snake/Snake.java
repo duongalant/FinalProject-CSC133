@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-class Snake extends GameObject implements InSnake {
+class Snake extends GameObject {
 
     // The location in the grid of all the segments
     public ArrayList<Point> segmentLocations;
@@ -45,6 +45,12 @@ class Snake extends GameObject implements InSnake {
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
+    private UpButton upButton;
+    private DownButton downButton;
+    private LeftButton leftButton;
+    private RightButton rightButton;
+
+
 
     Snake(Context context, Point mr, int ss) {
 
@@ -70,6 +76,11 @@ class Snake extends GameObject implements InSnake {
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+
+        upButton = new UpButton(155, 1040,255,1140);
+        downButton = new DownButton(155,1285,255,1385);
+        rightButton = new RightButton(265,1160,365,1260);
+        leftButton = new LeftButton(50,1160,150,1260);
     }
     private void createHead(Context context, int ss){
         mBitmapHeads = new ArrayList<>();
@@ -109,7 +120,6 @@ class Snake extends GameObject implements InSnake {
         // Start with a single snake segment
         segmentLocations.add(new Point(w / 2, h / 2));
     }
-
 
     void move() {
         // Move the body
@@ -169,6 +179,9 @@ class Snake extends GameObject implements InSnake {
 
         return dead;
     }
+    boolean detectDeath(int mScore){
+        return mScore < 0;
+    }
 
     boolean checkDinner(Point l) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
@@ -186,6 +199,18 @@ class Snake extends GameObject implements InSnake {
         return false;
     }
 
+    boolean checkEnemy(Point l){
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+
+            if(segmentLocations.size() > 1){
+                segmentLocations.remove(segmentLocations.size()-1);
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void draw(Canvas canvas, Paint paint) {
 
@@ -195,19 +220,19 @@ class Snake extends GameObject implements InSnake {
             // Draw the head
             switch (heading) {
                 case RIGHT:
-                    drawHead(canvas, paint, 0);     //right
+                    draw(canvas, paint, 0);     //right
                     break;
 
                 case LEFT:
-                    drawHead(canvas, paint, 1);     //left
+                    draw(canvas, paint, 1);     //left
                     break;
 
                 case UP:
-                    drawHead(canvas, paint, 2);     //up
+                    draw(canvas, paint, 2);     //up
                     break;
 
                 case DOWN:
-                    drawHead(canvas, paint, 3);     //down
+                    draw(canvas, paint, 3);     //down
                     break;
             }
 
@@ -221,7 +246,7 @@ class Snake extends GameObject implements InSnake {
             }
         }
     }
-    private void drawHead(Canvas canvas, Paint paint, int direction){   //0 = right, 1 = left, 2=up, 3=down
+    private void draw(Canvas canvas, Paint paint, int direction){   //0 = right, 1 = left, 2=up, 3=down
         canvas.drawBitmap(mBitmapHeads.get(direction),
                 segmentLocations.get(0).x
                         * mSegmentSize,
@@ -232,47 +257,43 @@ class Snake extends GameObject implements InSnake {
 
     // Handle changing direction
     void switchHeading(MotionEvent motionEvent) {
+        float x = motionEvent.getX();
+        float y = motionEvent.getY();
 
-        // Is the tap on the right hand side?
-        if (motionEvent.getX() >= halfWayPoint) {
-            rotateRight();
-        } else {
-            // Rotate left
+
+        if (upButton.contains(x, y)) {
+            rotateUp();
+        } else if (downButton.contains(x, y)) {
+            rotateDown();
+        } else if (leftButton.contains(x, y)) {
             rotateLeft();
+        } else if (rightButton.contains(x, y)) {
+            rotateRight();
         }
+    }
+    private void rotateUp() {
+        if (heading != Heading.DOWN) {
+            heading = Heading.UP;
+        }
+
+    }
+    private void rotateDown(){
+        if (heading != Heading.UP) {
+            heading = Heading.DOWN;
+        }
+
     }
     private void rotateRight() {
-        switch (heading) {
-            // Rotate right
-            case UP:
-                heading = Heading.RIGHT;
-                break;
-            case RIGHT:
-                heading = Heading.DOWN;
-                break;
-            case DOWN:
-                heading = Heading.LEFT;
-                break;
-            case LEFT:
-                heading = Heading.UP;
-                break;
+
+        if (heading !=Heading.LEFT){
+            heading = Heading.RIGHT;
+       }
+
+    }
+    private void rotateLeft() {
+        if (heading !=Heading.RIGHT) {
+            heading = Heading.LEFT;
+        }
 
         }
     }
-    private void rotateLeft() {
-        switch (heading) {
-            case UP:
-                heading = Heading.LEFT;
-                break;
-            case LEFT:
-                heading = Heading.DOWN;
-                break;
-            case DOWN:
-                heading = Heading.RIGHT;
-                break;
-            case RIGHT:
-                heading = Heading.UP;
-                break;
-        }
-    }
-}
