@@ -58,6 +58,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // A snake ssss
     private Snake mSnake;
+    private boolean gifOn = false;
     // And an apple
     private Apple mApple;
     private Rock mRock;
@@ -221,6 +222,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
             mScore = mSugar.benefit(mScore, frameInSecond);
+            gifOn = true;
 
             mSP.play(mSugarID, 1, 1, 1, 0, 1);
         }
@@ -286,13 +288,21 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
-            mCanvas.drawText("Time: " + frameInSecond, 20, 220, mPaint);    //for testing
+            mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
 
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
             mSugar.draw(mCanvas, mPaint);
+
+            //set the snake's look different when it eats sugar item
+            if(mSnake.isImmune(frameInSecond) && gifOn){
+                mSnake.setGif(getContext());
+            }else if (gifOn){
+                mSnake.setNormal(getContext());
+                gifOn = false;
+            }
 
             mSugar.checkSpawn(mSnake.segmentLocations, frameInSecond, mCanvas, mPaint);
 
@@ -372,6 +382,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         }else if(mPaused && pauseButton.buttonRange(motionEvent)){  //to play button
             mPaused = false;
+            mSugar.setNextSpawnTime(frameInSecond);
 
         }else if(!mPaused){                                     //when the game is playing
             // Let the Snake class handle the input

@@ -46,10 +46,12 @@ class Snake extends GameObject {
 
     private int snakeHead;
     private int snakeBody;
+    private int[] headGif = new int[3];
+    private int[] bodyGif = new int[3];
+    private int index;
     private long duration;      //duration of immunity
 
     Snake(Context context, Point mr, int ss) {
-
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
 
@@ -60,6 +62,16 @@ class Snake extends GameObject {
 
         snakeHead = R.drawable.head;
         snakeBody = R.drawable.body;
+
+        headGif[0] = R.drawable.head_1;
+        headGif[1] = R.drawable.head_2;
+        headGif[2] = R.drawable.head_3;
+
+        bodyGif[0] = R.drawable.body_1;
+        bodyGif[1] = R.drawable.body_2;
+        bodyGif[2] = R.drawable.body_3;
+
+        index = 0;
 
         createHead(context, ss);
         createBody(context, ss);
@@ -229,10 +241,9 @@ class Snake extends GameObject {
         }
         return false;
     }
-
-    @Override
+    //@Override
     public void draw(Canvas canvas, Paint paint) {
-        canvas.drawText("Testing: " + duration, 20, 430, paint);   //for testing   -- immunity duration
+        canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
@@ -272,6 +283,26 @@ class Snake extends GameObject {
                         * mSegmentSize,
                 segmentLocations.get(0).y
                         * mSegmentSize, paint);
+    }
+
+    public void setGif(Context context){
+        snakeHead = headGif[index];
+        snakeBody = bodyGif[index];
+
+        createHead(context, mSegmentSize);
+        createBody(context, mSegmentSize);
+
+        index++;
+        if(index > 2)
+            index = 0;
+    }
+
+    public void setNormal(Context context){
+        snakeHead = R.drawable.head;
+        snakeBody = R.drawable.body;
+
+        createHead(context, mSegmentSize);
+        createBody(context, mSegmentSize);
     }
 
 
