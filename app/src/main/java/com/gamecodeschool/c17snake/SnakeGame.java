@@ -241,9 +241,13 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // Update all the game objects
     public void update() {
-
+        int TARGET_FPS = 10;
         // Move the snake
         mSnake.move();
+
+        // Update the mole
+        //
+        mMole.update(10 / TARGET_FPS, getHeight()); // Pass the screen height
 
         // Did the head of the snake eat the apple?
         if(mSnake.checkDinner(mApple.getLocation())){
