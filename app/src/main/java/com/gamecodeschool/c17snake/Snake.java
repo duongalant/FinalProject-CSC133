@@ -51,6 +51,13 @@ class Snake extends GameObject {
     private int index;
     private long duration;      //duration of immunity
 
+    private UpButton upButton;
+    private DownButton downButton;
+    private LeftButton leftButton;
+    private RightButton rightButton;
+
+
+
     Snake(Context context, Point mr, int ss) {
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
@@ -79,6 +86,11 @@ class Snake extends GameObject {
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+
+        upButton = new UpButton(155, 1040,255,1140);
+        downButton = new DownButton(155,1285,255,1385);
+        rightButton = new RightButton(265,1160,365,1260);
+        leftButton = new LeftButton(50,1160,150,1260);
 
         duration = -1;
     }
@@ -308,47 +320,43 @@ class Snake extends GameObject {
 
     // Handle changing direction
     void switchHeading(MotionEvent motionEvent) {
+        float x = motionEvent.getX();
+        float y = motionEvent.getY();
 
-        // Is the tap on the right hand side?
-        if (motionEvent.getX() >= halfWayPoint) {
-            rotateRight();
-        } else {
-            // Rotate left
+
+        if (upButton.contains(x, y)) {
+            rotateUp();
+        } else if (downButton.contains(x, y)) {
+            rotateDown();
+        } else if (leftButton.contains(x, y)) {
             rotateLeft();
+        } else if (rightButton.contains(x, y)) {
+            rotateRight();
         }
+    }
+    private void rotateUp() {
+        if (heading != Heading.DOWN) {
+            heading = Heading.UP;
+        }
+
+    }
+    private void rotateDown(){
+        if (heading != Heading.UP) {
+            heading = Heading.DOWN;
+        }
+
     }
     private void rotateRight() {
-        switch (heading) {
-            // Rotate right
-            case UP:
-                heading = Heading.RIGHT;
-                break;
-            case RIGHT:
-                heading = Heading.DOWN;
-                break;
-            case DOWN:
-                heading = Heading.LEFT;
-                break;
-            case LEFT:
-                heading = Heading.UP;
-                break;
+
+        if (heading !=Heading.LEFT){
+            heading = Heading.RIGHT;
+       }
+
+    }
+    private void rotateLeft() {
+        if (heading !=Heading.RIGHT) {
+            heading = Heading.LEFT;
+        }
 
         }
     }
-    private void rotateLeft() {
-        switch (heading) {
-            case UP:
-                heading = Heading.LEFT;
-                break;
-            case LEFT:
-                heading = Heading.DOWN;
-                break;
-            case DOWN:
-                heading = Heading.RIGHT;
-                break;
-            case RIGHT:
-                heading = Heading.UP;
-                break;
-        }
-    }
-}
