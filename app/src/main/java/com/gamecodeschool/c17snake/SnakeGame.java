@@ -17,6 +17,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.core.content.res.ResourcesCompat;
 import java.io.IOException;
+import java.util.ArrayList;
 
 class SnakeGame extends SurfaceView implements Runnable {
     // Objects for the game loop/thread
@@ -69,6 +70,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private DownButton downButton;
     private RightButton rightButton;
     private LeftButton leftButton;
+    private ExitButton exitButton;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -140,6 +142,9 @@ class SnakeGame extends SurfaceView implements Runnable {
         downButton = new DownButton(downButtonLeft, downButtonTop, downButtonRight, downButtonBottom);
         rightButton = new RightButton(rightButtonLeft, rightButtonTop, rightButtonRight, rightButtonBottom);
         leftButton = new LeftButton(leftButtonLeft, leftButtonTop, leftButtonRight, leftButtonBottom);
+
+        //Create the exit button
+        exitButton = new ExitButton(context);
     }
 
     private void setSounds(Context context){
@@ -325,7 +330,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mPaint.setTypeface(mAtariFont);
 
             // Draw the score
-            mCanvas.drawText("" + mScore, 20, 120, mPaint);
+            drawingText("" + mScore, 20, 120);
 
             mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
 
@@ -333,8 +338,9 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
-            mSugar.draw(mCanvas, mPaint);
+            mMole.draw(mCanvas, mPaint);
 
+            // Draw the control button
             controlButton.draw(mCanvas, mPaint);
 
             upButton.draw(mCanvas, mPaint);
@@ -367,38 +373,45 @@ class SnakeGame extends SurfaceView implements Runnable {
         if(mPaused){
             // Set the size and color of the mPaint for the text
             //mPaint.setColor(Color.argb(255, 255, 255, 255));  //redundancy
-
             // Draw our names
             mPaint.setTextSize(50);
-            mCanvas.drawText("Alan Duong", 1700, 50, mPaint);
-            mCanvas.drawText("Kenny Ahn", 1700, 100, mPaint);
-            mCanvas.drawText("Taekjin Jung", 1700, 150, mPaint);
-            mCanvas.drawText("David Pham", 1700, 200, mPaint);
-            mCanvas.drawText("Nancy Zhu", 1700, 250, mPaint);
+            drawingText("Alan Duong", 1700, 50);
+            drawingText("Kenny Ahn", 1700, 100);
+            drawingText("Taekjin Jung", 1700, 150);
+            drawingText("David Pham", 1700, 200);
+            drawingText("Nancy Zhu", 1700, 250);
 
             if(!gotReset){
                 // Draw pause instruction
-                mCanvas.drawText("Click to resume", 1325, 525, mPaint);
+                drawingText("Click to resume", 1325, 525);
             }else if(winner){
                 mPaint.setTextSize(120);
-                mCanvas.drawText(getResources().getString(R.string.for_winner1),
-                        mCanvas.getWidth()/6, mCanvas.getHeight()/3+50, mPaint);
-                mCanvas.drawText(getResources().getString(R.string.for_winner2),
-                        mCanvas.getWidth()/3, (mCanvas.getWidth()/3)+120, mPaint);
-            }else if(dead){
+                drawingText(getResources().getString(R.string.for_winner1), mCanvas.getWidth()/6, mCanvas.getHeight()/3+50);
+                drawingText(getResources().getString(R.string.for_winner2), mCanvas.getWidth()/3, (mCanvas.getWidth()/3)+120);
+                exitButton.draw(mCanvas, mPaint);
+            }else if(dead) {
                 mPaint.setTextSize(120);
-                mCanvas.drawText(getResources().getString(R.string.for_loser),
-                        mCanvas.getWidth()/6, mCanvas.getHeight()/3+110, mPaint);
+                drawingText(getResources().getString(R.string.for_loser),
+                        mCanvas.getWidth() / 6, 400);
+                mPaint.setTextSize(60);
+                drawingText("Score:" + mScore, mCanvas.getWidth() / 6, 500);
+                drawingText("Tap anywhere for new game", mCanvas.getWidth() / 6, 600);
+                //draw the menu button
+                exitButton.draw(mCanvas, mPaint);
             }else{
                 // Draw the message
                 // We will give this an international upgrade soon
                 //mCanvas.drawText("Tap To Play!", 200, 700, mPaint);
                 mPaint.setTextSize(120);
-                mCanvas.drawText(getResources().getString(R.string.tap_to_play),
-                        100, 800, mPaint);
+                drawingText(getResources().getString(R.string.tap_to_play), 100, 800);
             }
         }
     }
+    //method to reduce duplicated code
+    private void drawingText(String text, int x, int y) {
+        mCanvas.drawText(text, x, y, mPaint);
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
@@ -414,7 +427,14 @@ class SnakeGame extends SurfaceView implements Runnable {
     }
 
     private boolean validTouch(MotionEvent motionEvent){
-        if(winner || dead){
+        if (winner || dead) {
+            if (exitButton.buttonRange(motionEvent)) {
+                mPaused = true;
+            }
+            else {
+                mPaused = false;
+                newGame();
+            }
             winner = false;
             dead = false;
         }else if (mPaused && gotReset) {  //for new start
