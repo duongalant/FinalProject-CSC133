@@ -17,13 +17,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.core.content.res.ResourcesCompat;
 import java.io.IOException;
-import java.util.ArrayList;
 
 class SnakeGame extends SurfaceView implements Runnable {
     // Objects for the game loop/thread
     private Thread mThread = null;
     // Control pausing between updates
     private long mNextFrameTime;
+    private long frameInSecond;
     // Is the game currently playing and or paused?
     private volatile boolean mPlaying = false;
     private volatile boolean mPaused = true;
@@ -35,6 +35,8 @@ class SnakeGame extends SurfaceView implements Runnable {
     private SoundPool mSP;
     private int mEat_ID = -1;
     private int mCrashID = -1;
+    private int mDeathID = -1;
+    private int mSugarID = -1;
 
     // The size in segments of the playable area
     private final int NUM_BLOCKS_WIDE = 40;
@@ -61,8 +63,6 @@ class SnakeGame extends SurfaceView implements Runnable {
     private Rock mRock;
     private Sugar mSugar;
     private PauseButton pauseButton;
-    private boolean executeSugar = true;
-
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -125,8 +125,14 @@ class SnakeGame extends SurfaceView implements Runnable {
             descriptor = assetManager.openFd("get_apple.ogg");
             mEat_ID = mSP.load(descriptor, 0);
 
-            descriptor = assetManager.openFd("snake_death.ogg");
+            descriptor = assetManager.openFd("snake_hit.ogg");
             mCrashID = mSP.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("snake_death.ogg");
+            mDeathID = mSP.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sugar_power.ogg");       // about 6 sec
+            mSugarID = mSP.load(descriptor, 0);
 
         } catch (IOException e) {
             // Error
@@ -143,7 +149,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Get the apple ready for dinner
         mApple.spawn();
         mRock.spawn();
-        mSugar.spawn();
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -153,6 +158,10 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         // Setup mNextFrameTime so an update can triggeredde
         mNextFrameTime = System.currentTimeMillis();
+        frameInSecond = mNextFrameTime/1000;
+
+        // reset the sugar
+        mSugar.reset(frameInSecond);
     }
 
 
@@ -186,6 +195,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Setup when the next update will be triggered
             mNextFrameTime =System.currentTimeMillis()
                     + MILLIS_PER_SECOND / TARGET_FPS;
+            frameInSecond = mNextFrameTime/1000;
 
             // Return true so that the update and draw
             // methods are executed
@@ -209,13 +219,19 @@ class SnakeGame extends SurfaceView implements Runnable {
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
         }
 
-        if(mSnake.checkSugar(mSugar.getLocation())){
-            mScore = mSugar.benefit(mScore);
+        if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
+            mScore = mSugar.benefit(mScore, frameInSecond);
+
+            mSP.play(mSugarID, 1, 1, 1, 0, 1);
         }
 
-        if(mSnake.checkEnemy(mRock.getLocation())){
+        if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
             mRock.spawn(mSnake.segmentLocations);
-            mScore = mRock.penalty(mScore);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mRock.penalty(mScore);
+
+            mSP.play(mCrashID, 1, 1, 0, 0, 1);
         }
 
         if(mScore == maxScore){
@@ -227,7 +243,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Did the snake die?
         if (mSnake.detectDeath()) {
             // Pause the game ready to start again
-            mSP.play(mCrashID, 1, 1, 0, 0, 1);
+            mSP.play(mDeathID, 1, 1, 0, 0, 1);
 
             mPaused =true;
             gotReset = true;
@@ -269,8 +285,8 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
-            //(mNextFrameTime%x)/y      //x is for the max time, y is for displaying max time
-            mCanvas.drawText("Time: " + ((int)(mNextFrameTime%5000)/1000), 20, 220, mPaint);
+
+            mCanvas.drawText("Time: " + frameInSecond, 20, 220, mPaint);    //for testing
 
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
@@ -278,12 +294,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mRock.draw(mCanvas, mPaint);
             mSugar.draw(mCanvas, mPaint);
 
-            //when it hits the timer, it runs the method only once
-            if(((int)(mNextFrameTime%5000)/1000) == 0 && executeSugar) {
-                executeSugar = mSugar.checkSpawn(mSnake.segmentLocations, mCanvas, mPaint);
-            }else if(((int)(mNextFrameTime%5000)/1000) == 1){
-                executeSugar = true;
-            }
+            mSugar.checkSpawn(mSnake.segmentLocations, frameInSecond, mCanvas, mPaint);
 
             // Draw the pause button
             pauseButton.draw(mCanvas, mPaint);

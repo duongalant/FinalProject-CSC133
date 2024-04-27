@@ -14,14 +14,10 @@ import java.util.Random;
 public class Sugar extends GameObject implements ISpawnable{
     private boolean friendly = true;
     private Point mSpawnRange;
-    private long mNextFrameTime;
-    private int seconds;
+    private boolean spawned;
+    private long nextSec;
     Random random;
     public Sugar(Context context, Point sr, int s){
-        random = new Random();
-
-        mNextFrameTime = System.currentTimeMillis();    //timer
-
         // Make a note of the passed in spawn range
         mSpawnRange = sr;
         // Make a note of the size of an apple
@@ -34,20 +30,42 @@ public class Sugar extends GameObject implements ISpawnable{
 
         // Resize the bitmap
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
+
+        random = new Random();
+    }
+
+    public void reset(long currentTime){
+        spawned = false;
+        setNextSpawnTime(currentTime);
+        location.x = -10;
     }
 
     //every certain amount of time, it randomly spawns
-    public boolean checkSpawn(ArrayList<Point> segmentLocations, Canvas mCanvas, Paint mPaint){
-        //1/3 possibility in every each 10 sec
-        int num = random.nextInt(2);
-        mCanvas.drawText("Testing: " + num, 20, 330, mPaint);
+    public void checkSpawn(ArrayList<Point> segmentLocations, long currentTime, Canvas mCanvas, Paint mPaint){
+        mCanvas.drawText("Testing: " + nextSec, 20, 330, mPaint);   //for testing   -- sugar's spawn time
 
-        if(num == 0)
+        if(spawnTime(currentTime) && !spawned){
             spawn(segmentLocations);
-
-        return false;   //once execute, make it stop
+            setNextSpawnTime(currentTime);
+            spawned = true;
+        }else if(spawnTime(currentTime)){   //when it hits the spawnTime and sugar is already existed
+            setNextSpawnTime(currentTime);
+        }
     }
-    public void spawn(){ resetPosition(); }
+
+    private boolean spawnTime(long currentTime){
+        return nextSec == currentTime;
+    }
+    private void setNextSpawnTime(long currentTime){
+        nextSec = currentTime + rand_long(5, 15);        //spawn in min 5 sec, max 15 sec
+    }
+    public long rand_long(long min, long max) {
+        return (long) ((Math.random() * (max - min)) + min);
+    }
+
+    public void spawn(){
+        resetPosition();
+    }
     public void spawn(ArrayList<Point> segmentLocations){
         spawn();
         while(InSnake.checkSpot(segmentLocations, location, -1)){
@@ -62,8 +80,11 @@ public class Sugar extends GameObject implements ISpawnable{
     }
     public boolean isFriendly(){ return  friendly; }
 
-    public int benefit(int mScore){
-        location.x = -10;
+    //when snake eat the sugar
+    public int benefit(int mScore, long currentTime){
+        location.x = -10;   //move it to outside of the screen
+        spawned = false;
+        setNextSpawnTime(currentTime);
         return mScore += 5;
     }
 }

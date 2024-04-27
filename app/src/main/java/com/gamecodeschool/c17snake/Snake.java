@@ -1,6 +1,7 @@
 package com.gamecodeschool.c17snake;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,9 +9,11 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 class Snake extends GameObject {
 
@@ -37,16 +40,13 @@ class Snake extends GameObject {
     private Heading heading = Heading.RIGHT;
 
     // A bitmap for each direction the head can face
-    private Bitmap mBitmapHeadRight;
-    private Bitmap mBitmapHeadLeft;
-    private Bitmap mBitmapHeadUp;
-    private Bitmap mBitmapHeadDown;
-
-    // A bitmap for each direction the head can face
     private ArrayList<Bitmap> mBitmapHeads;
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
+    private int snakeHead;
+    private int snakeBody;
+    private long duration;      //duration of immunity
 
     Snake(Context context, Point mr, int ss) {
 
@@ -58,20 +58,28 @@ class Snake extends GameObject {
         mSegmentSize = ss;
         mMoveRange = mr;
 
+        snakeHead = R.drawable.head;
+        snakeBody = R.drawable.body;
+
         createHead(context, ss);
-
-        // Create and scale the body
-        mBitmapBody = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.body);
-
-        mBitmapBody = Bitmap
-                .createScaledBitmap(mBitmapBody,
-                        ss, ss, false);
+        createBody(context, ss);
 
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+
+        duration = -1;
+    }
+
+    private void createBody(Context context, int ss){
+        // Create and scale the body
+        mBitmapBody = BitmapFactory
+                .decodeResource(context.getResources(),
+                        snakeBody);
+
+        mBitmapBody = Bitmap
+                .createScaledBitmap(mBitmapBody,
+                        ss, ss, false);
     }
     private void createHead(Context context, int ss){
         mBitmapHeads = new ArrayList<>();
@@ -79,7 +87,7 @@ class Snake extends GameObject {
         // Create and scale the bitmaps
         for(int i = 0; i < 4; i++){
             mBitmapHeads.add(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.head));
+                    snakeHead));
         }
 
         // Modify the bitmaps to face the snake head
@@ -110,6 +118,8 @@ class Snake extends GameObject {
 
         // Start with a single snake segment
         segmentLocations.add(new Point(w / 2, h / 2));
+
+        duration = -1;
     }
 
 
@@ -186,24 +196,33 @@ class Snake extends GameObject {
         return false;
     }
 
-    boolean checkSugar(Point l) {
+    boolean checkSugar(Point l, long currentTime) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
 
             segmentLocations.add(new Point(-10, -10));
+
+            getImmune(currentTime);
             return true;
         }
         return false;
     }
 
-    boolean checkEnemy(Point l){
+    private void getImmune(long currentTime){
+        duration = currentTime + 6;    //immune for 6 sec
+    }
+    boolean isImmune(long currentTime){     //if the snake is immune
+        return currentTime < duration;
+    }
+
+    boolean checkEnemy(Point l, long currentTime){
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
 
-            if(segmentLocations.size() > 1){
+            if(segmentLocations.size() > 1 && !isImmune(currentTime)){
                 segmentLocations.remove(segmentLocations.size()-1);
-            }else{
+            }else if(!isImmune(currentTime)){
                 dead = true;
             }
             return true;
@@ -213,6 +232,7 @@ class Snake extends GameObject {
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
+        canvas.drawText("Testing: " + duration, 20, 430, paint);   //for testing   -- immunity duration
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
