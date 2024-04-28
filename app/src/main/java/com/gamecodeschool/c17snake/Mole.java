@@ -42,11 +42,19 @@ public class Mole extends GameObject implements ISpawnable {
         location.y = 0;
     }
 
-    public void update(int deltaTime){
-        int speed = 10;
+    public void update(int deltaTime, int screenHeight) {
+        int speed = 1;
         location.y += speed * deltaTime;
 
+        // Check if the mole has reached the bottom of the screen
+        // apparently the bottom of the screen is like 20 pixels from the top
+        // this should be int screenHeight but for now its hardcoded as 20
+        if (location.y > 20) {
+            // Reset mole position to the top
+            resetPosition();
         }
+    }
+
     public boolean isOutOfBounds(int screenHeight) {
         return location.y > screenHeight;
     }
