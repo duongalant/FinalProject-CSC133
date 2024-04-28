@@ -34,10 +34,6 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // for playing sound effects
     private SoundPool mSP;
-    private int mEat_ID = -1;
-    private int mCrashID = -1;
-    private int mDeathID = -1;
-    private int mSugarID = -1;
 
     // The size in segments of the playable area
     private final int NUM_BLOCKS_WIDE = 40;
@@ -175,6 +171,9 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         // reset the sugar
         mSugar.reset(frameInSecond);
+
+        // reset the bg music
+        soundManager.startBackgroundMusic();
     }
 
 
@@ -228,6 +227,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         if(mSnake.checkDinner(mApple.getLocation())){
             mApple.spawn(mSnake.segmentLocations);
             mScore = mApple.benefit(mScore);
+
             soundManager.playEatSound();
         }
 
@@ -235,7 +235,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mScore = mSugar.benefit(mScore, frameInSecond);
             gifOn = true;
 
-            mSP.play(mSugarID, 1, 1, 1, 0, 1);
+            soundManager.playSugarSound();
         }
 
         if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
@@ -244,6 +244,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             if(!mSnake.isImmune(frameInSecond))
                 mScore = mRock.penalty(mScore);
 
+            soundManager.playCrashSound();
         }
 
         if(mScore == maxScore){
@@ -255,7 +256,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Did the snake die?
         if (mSnake.detectDeath()) {
             // Pause the game ready to start again
-            soundManager.playCrashSound();
+            soundManager.playDeathSound();
 
             mPaused =true;
             gotReset = true;
@@ -318,8 +319,10 @@ class SnakeGame extends SurfaceView implements Runnable {
             //set the snake's look different when it eats sugar item
             if(mSnake.isImmune(frameInSecond) && gifOn){
                 mSnake.setGif(getContext());
-            }else if (gifOn){
+            }else if (gifOn){   //when snake is back normal from immunity
                 mSnake.setNormal(getContext());
+                soundManager.startBackgroundMusic();
+
                 gifOn = false;
             }
 
