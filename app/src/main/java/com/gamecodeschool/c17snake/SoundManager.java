@@ -17,6 +17,8 @@ public class SoundManager {
     private MediaPlayer bg;
     private int eatSoundId;
     private int crashSoundId;
+    private int deathSoundId;
+    private int sugarSoundId;
 
     private SoundManager(Context context) {
         // Initialize background music
@@ -43,8 +45,14 @@ public class SoundManager {
             descriptor = assetManager.openFd("get_apple.ogg");
             eatSoundId = soundPool.load(descriptor, 0);
 
-            descriptor = assetManager.openFd("snake_death.ogg");
+            descriptor = assetManager.openFd("snake_hit.ogg");
             crashSoundId = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("snake_death.ogg");
+            deathSoundId = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sugar_power.ogg");
+            sugarSoundId = soundPool.load(descriptor, 0);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,5 +90,16 @@ public class SoundManager {
 
     public void playCrashSound() {
         soundPool.play(crashSoundId, 1, 1, 0, 0, 1);
+    }
+
+    public void playDeathSound() {
+        stopBackgroundMusic();      //Singleton
+
+        soundPool.play(deathSoundId, 1, 1, 0, 0, 1);
+    }
+    public void playSugarSound() {
+        stopBackgroundMusic();      //Singleton
+
+        soundPool.play(sugarSoundId, 1, 1, 0, 0, 1);
     }
 }
