@@ -42,7 +42,7 @@ public class Sugar extends GameObject implements ISpawnable{
 
     //every certain amount of time, it randomly spawns
     public void checkSpawn(ArrayList<Point> segmentLocations, long currentTime, Canvas mCanvas, Paint mPaint){
-        mCanvas.drawText("Sugar: " + nextSec%100000, 20, 330, mPaint);   //for testing   -- sugar's spawn time
+        //mCanvas.drawText("Sugar: " + nextSec%100000, 20, 330, mPaint);   //for testing   -- sugar's spawn time
 
         if(spawnTime(currentTime) && !spawned){
             spawn(segmentLocations);

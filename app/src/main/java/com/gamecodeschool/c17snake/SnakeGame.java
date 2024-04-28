@@ -327,7 +327,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mBackground.draw(mCanvas);
 
             // Set the size and color of the mPaint for the text
-            mPaint.setColor(Color.argb(255, 255, 255, 255));
+            mPaint.setColor(Color.argb(255, 0, 0, 0));
             mPaint.setTextSize(120);
 
             mPaint.setTypeface(mAtariFont);
@@ -335,7 +335,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Draw the score
             drawingText("" + mScore, 20, 120);
 
-            mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
+            //mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
 
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
@@ -372,6 +372,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     }
 
     private void drawText(){
+        mPaint.setColor(Color.argb(255, 0, 0, 0));
         // Draw some text while paused
         if(mPaused){
             // Set the size and color of the mPaint for the text

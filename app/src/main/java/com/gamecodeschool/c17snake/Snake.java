@@ -255,7 +255,7 @@ class Snake extends GameObject {
     }
     //@Override
     public void draw(Canvas canvas, Paint paint) {
-        canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
+        //canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
