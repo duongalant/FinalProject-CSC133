@@ -27,12 +27,14 @@ public class PauseButton {
         canvas.drawRect(buttonRect.right - 40, buttonRect.top + 20, buttonRect.right - 20, buttonRect.bottom - 20, paint);
     }
 
-    /*
+
     public Rect getButtonRect() {
+
         return buttonRect;
     }
-    */
 
+
+    //check if the player is clicking the button
     public boolean buttonRange(MotionEvent motionEvent){
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();

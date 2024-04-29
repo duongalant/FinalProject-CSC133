@@ -1,17 +1,21 @@
 package com.gamecodeschool.c17snake;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
-class Snake extends GameObject implements InSnake {
+class Snake extends GameObject {
 
     // The location in the grid of all the segments
     public ArrayList<Point> segmentLocations;
@@ -25,6 +29,7 @@ class Snake extends GameObject implements InSnake {
     // Where is the centre of the screen
     // horizontally in pixels?
     private int halfWayPoint;
+    private boolean dead = false;
 
     // For tracking movement Heading
     private enum Heading {
@@ -35,17 +40,25 @@ class Snake extends GameObject implements InSnake {
     private Heading heading = Heading.RIGHT;
 
     // A bitmap for each direction the head can face
-    private Bitmap mBitmapHeadRight;
-    private Bitmap mBitmapHeadLeft;
-    private Bitmap mBitmapHeadUp;
-    private Bitmap mBitmapHeadDown;
-
+    private ArrayList<Bitmap> mBitmapHeads;
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
+    private int snakeHead;
+    private int snakeBody;
+    private int[] headGif = new int[3];
+    private int[] bodyGif = new int[3];
+    private int index;
+    private long duration;      //duration of immunity
+
+    private UpButton upButton;
+    private DownButton downButton;
+    private LeftButton leftButton;
+    private RightButton rightButton;
+
+
 
     Snake(Context context, Point mr, int ss) {
-
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
 
@@ -54,68 +67,73 @@ class Snake extends GameObject implements InSnake {
         mSegmentSize = ss;
         mMoveRange = mr;
 
+        snakeHead = R.drawable.head;
+        snakeBody = R.drawable.body;
+
+        headGif[0] = R.drawable.head_1;
+        headGif[1] = R.drawable.head_2;
+        headGif[2] = R.drawable.head_3;
+
+        bodyGif[0] = R.drawable.body_1;
+        bodyGif[1] = R.drawable.body_2;
+        bodyGif[2] = R.drawable.body_3;
+
+        index = 0;
+
+        createHead(context, ss);
+        createBody(context, ss);
+
+        // The halfway point across the screen in pixels
+        // Used to detect which side of screen was pressed
+        halfWayPoint = mr.x * ss / 2;
+
+        upButton = new UpButton(155, 1040,255,1140);
+        downButton = new DownButton(155,1285,255,1385);
+        rightButton = new RightButton(265,1160,365,1260);
+        leftButton = new LeftButton(50,1160,150,1260);
+
+        duration = -1;
+    }
+
+    private void createBody(Context context, int ss){
+        // Create and scale the body
+        mBitmapBody = BitmapFactory
+                .decodeResource(context.getResources(),
+                        snakeBody);
+
+        mBitmapBody = Bitmap
+                .createScaledBitmap(mBitmapBody,
+                        ss, ss, false);
+    }
+    private void createHead(Context context, int ss){
+        mBitmapHeads = new ArrayList<>();
+
         // Create and scale the bitmaps
-        mBitmapHeadRight = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.head);
-
-        // Create 3 more versions of the head for different headings
-        mBitmapHeadLeft = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.head);
-
-        mBitmapHeadUp = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.head);
-
-        mBitmapHeadDown = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.head);
+        for(int i = 0; i < 4; i++){
+            mBitmapHeads.add(BitmapFactory.decodeResource(context.getResources(),
+                    snakeHead));
+        }
 
         // Modify the bitmaps to face the snake head
         // in the correct direction
-        mBitmapHeadRight = Bitmap
-                .createScaledBitmap(mBitmapHeadRight,
-                        ss, ss, false);
+        mBitmapHeads.set(0, Bitmap.createScaledBitmap(mBitmapHeads.get(0), ss, ss, false));
 
         // A matrix for scaling
         Matrix matrix = new Matrix();
         matrix.preScale(-1, 1);
 
-        mBitmapHeadLeft = Bitmap
-                .createBitmap(mBitmapHeadRight,
-                        0, 0, ss, ss, matrix, true);
+        int[] rotates = {-90, 180, -1};
+        for(int i = 1; i < mBitmapHeads.size(); i++){
+            mBitmapHeads.set(i, Bitmap.createBitmap(mBitmapHeads.get(0), 0, 0, ss, ss, matrix, true));
 
-        // A matrix for rotating
-        matrix.preRotate(-90);
-        mBitmapHeadUp = Bitmap
-                .createBitmap(mBitmapHeadRight,
-                        0, 0, ss, ss, matrix, true);
-
-        // Matrix operations are cumulative
-        // so rotate by 180 to face down
-        matrix.preRotate(180);
-        mBitmapHeadDown = Bitmap
-                .createBitmap(mBitmapHeadRight,
-                        0, 0, ss, ss, matrix, true);
-
-        // Create and scale the body
-        mBitmapBody = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.body);
-
-        mBitmapBody = Bitmap
-                .createScaledBitmap(mBitmapBody,
-                        ss, ss, false);
-
-        // The halfway point across the screen in pixels
-        // Used to detect which side of screen was pressed
-        halfWayPoint = mr.x * ss / 2;
+            // A matrix for rotating
+            matrix.preRotate(rotates[i-1]);
+        }
     }
 
     // Get the snake ready for a new game
     void reset(int w, int h) {
-
+        dead = false;
         // Reset the heading
         heading = Heading.RIGHT;
 
@@ -124,6 +142,8 @@ class Snake extends GameObject implements InSnake {
 
         // Start with a single snake segment
         segmentLocations.add(new Point(w / 2, h / 2));
+
+        duration = -1;
     }
 
 
@@ -138,7 +158,10 @@ class Snake extends GameObject implements InSnake {
             segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
             segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
         }
+        movingHead();
 
+    }
+    private void movingHead() {
         // Move the head in the appropriate heading
         // Get the existing head position
         Point p = segmentLocations.get(0);
@@ -161,32 +184,21 @@ class Snake extends GameObject implements InSnake {
                 p.x--;
                 break;
         }
-
     }
 
     boolean detectDeath() {
         // Has the snake died?
-        boolean dead = false;
+        boolean overLeft = segmentLocations.get(0).x <= -1;
+        boolean overRight = segmentLocations.get(0).x > mMoveRange.x;
+        boolean overTop = segmentLocations.get(0).y <= -1;
+        boolean overBottom = segmentLocations.get(0).y > mMoveRange.y;
 
         // Hit any of the screen edges
-        if (segmentLocations.get(0).x == -1 ||
-                segmentLocations.get(0).x > mMoveRange.x ||
-                segmentLocations.get(0).y == -1 ||
-                segmentLocations.get(0).y > mMoveRange.y) {
-
+        if (overLeft || overRight || overTop || overBottom) {
             dead = true;
         }
-        /*
-        // Eaten itself?
-        for (int i = segmentLocations.size() - 1; i > 0; i--) {
-            // Have any of the sections collided with the head
-            if (segmentLocations.get(0).x == segmentLocations.get(i).x &&
-                    segmentLocations.get(0).y == segmentLocations.get(i).y) {
 
-                dead = true;
-            }
-        }
-        */
+        //Eaten itself?
         if(InSnake.checkSpot(segmentLocations, segmentLocations.get(0))) dead = true;
 
         return dead;
@@ -208,8 +220,42 @@ class Snake extends GameObject implements InSnake {
         return false;
     }
 
-    @Override
+    boolean checkSugar(Point l, long currentTime) {
+        //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+
+            segmentLocations.add(new Point(-10, -10));
+
+            getImmune(currentTime);
+            return true;
+        }
+        return false;
+    }
+
+    private void getImmune(long currentTime){
+        duration = currentTime + 6;    //immune for 6 sec
+    }
+    boolean isImmune(long currentTime){     //if the snake is immune
+        return currentTime < duration;
+    }
+
+    boolean checkEnemy(Point l, long currentTime){
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+
+            if(segmentLocations.size() > 1 && !isImmune(currentTime)){
+                segmentLocations.remove(segmentLocations.size()-1);
+            }else if(!isImmune(currentTime)){
+                dead = true;
+            }
+            return true;
+        }
+        return false;
+    }
+    //@Override
     public void draw(Canvas canvas, Paint paint) {
+        //canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
@@ -217,35 +263,19 @@ class Snake extends GameObject implements InSnake {
             // Draw the head
             switch (heading) {
                 case RIGHT:
-                    canvas.drawBitmap(mBitmapHeadRight,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
+                    draw(canvas, paint, 0);     //right
                     break;
 
                 case LEFT:
-                    canvas.drawBitmap(mBitmapHeadLeft,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
+                    draw(canvas, paint, 1);     //left
                     break;
 
                 case UP:
-                    canvas.drawBitmap(mBitmapHeadUp,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
+                    draw(canvas, paint, 2);     //up
                     break;
 
                 case DOWN:
-                    canvas.drawBitmap(mBitmapHeadDown,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
+                    draw(canvas, paint, 3);     //down
                     break;
             }
 
@@ -259,45 +289,74 @@ class Snake extends GameObject implements InSnake {
             }
         }
     }
+    private void draw(Canvas canvas, Paint paint, int direction){   //0 = right, 1 = left, 2=up, 3=down
+        canvas.drawBitmap(mBitmapHeads.get(direction),
+                segmentLocations.get(0).x
+                        * mSegmentSize,
+                segmentLocations.get(0).y
+                        * mSegmentSize, paint);
+    }
+
+    public void setGif(Context context){
+        snakeHead = headGif[index];
+        snakeBody = bodyGif[index];
+
+        createHead(context, mSegmentSize);
+        createBody(context, mSegmentSize);
+
+        index++;
+        if(index > 2)
+            index = 0;
+    }
+
+    public void setNormal(Context context){
+        snakeHead = R.drawable.head;
+        snakeBody = R.drawable.body;
+
+        createHead(context, mSegmentSize);
+        createBody(context, mSegmentSize);
+    }
 
 
     // Handle changing direction
     void switchHeading(MotionEvent motionEvent) {
+        float x = motionEvent.getX();
+        float y = motionEvent.getY();
 
-        // Is the tap on the right hand side?
-        if (motionEvent.getX() >= halfWayPoint) {
-            switch (heading) {
-                // Rotate right
-                case UP:
-                    heading = Heading.RIGHT;
-                    break;
-                case RIGHT:
-                    heading = Heading.DOWN;
-                    break;
-                case DOWN:
-                    heading = Heading.LEFT;
-                    break;
-                case LEFT:
-                    heading = Heading.UP;
-                    break;
 
-            }
-        } else {
-            // Rotate left
-            switch (heading) {
-                case UP:
-                    heading = Heading.LEFT;
-                    break;
-                case LEFT:
-                    heading = Heading.DOWN;
-                    break;
-                case DOWN:
-                    heading = Heading.RIGHT;
-                    break;
-                case RIGHT:
-                    heading = Heading.UP;
-                    break;
-            }
+        if (upButton.contains(x, y)) {
+            rotateUp();
+        } else if (downButton.contains(x, y)) {
+            rotateDown();
+        } else if (leftButton.contains(x, y)) {
+            rotateLeft();
+        } else if (rightButton.contains(x, y)) {
+            rotateRight();
         }
     }
-}
+    private void rotateUp() {
+        if (heading != Heading.DOWN) {
+            heading = Heading.UP;
+        }
+
+    }
+    private void rotateDown(){
+        if (heading != Heading.UP) {
+            heading = Heading.DOWN;
+        }
+
+    }
+    private void rotateRight() {
+
+        if (heading !=Heading.LEFT){
+            heading = Heading.RIGHT;
+       }
+
+    }
+    private void rotateLeft() {
+        if (heading !=Heading.RIGHT) {
+            heading = Heading.LEFT;
+        }
+
+        }
+    }
