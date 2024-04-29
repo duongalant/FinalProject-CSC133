@@ -1,23 +1,22 @@
 package com.gamecodeschool.c17snake;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.Build;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.core.content.res.ResourcesCompat;
-import java.io.IOException;
+
 import android.graphics.drawable.Drawable;
+
+import com.gamecodeschool.c17snake.Buttons.ControlButton;
+import com.gamecodeschool.c17snake.Buttons.ExitButton;
+import com.gamecodeschool.c17snake.Buttons.PauseButton;
 
 class SnakeGame extends SurfaceView implements Runnable {
     // Objects for the game loop/thread
@@ -31,9 +30,6 @@ class SnakeGame extends SurfaceView implements Runnable {
     private volatile boolean gotReset = true;
     private volatile boolean winner = false;
     private volatile boolean dead = false;
-
-    // for playing sound effects
-    private SoundPool mSP;
 
     // The size in segments of the playable area
     private final int NUM_BLOCKS_WIDE = 40;
@@ -66,10 +62,6 @@ class SnakeGame extends SurfaceView implements Runnable {
     private Sugar mSugar;
     private PauseButton pauseButton;
     private ControlButton controlButton;
-    private UpButton upButton;
-    private DownButton downButton;
-    private RightButton rightButton;
-    private LeftButton leftButton;
     private ExitButton exitButton;
 
     // This is the constructor method that gets called
@@ -105,45 +97,11 @@ class SnakeGame extends SurfaceView implements Runnable {
         int buttonSize = 100;
         int controlButtonSize = 375;
 
-        int buttonLeft = size.x - buttonSize - 20; // Adjust position as needed
-        int buttonTop = 450; // Adjust position as needed
-        int buttonRight = buttonLeft + buttonSize;
-        int buttonBottom = buttonTop + buttonSize;
-
-        int controlButtonLeft = 20; // Adjust position as needed
-        int controlButtonTop = 1025; // Adjust position as needed
-        int controlButtonRight = controlButtonLeft + controlButtonSize;
-        int controlButtonBottom = controlButtonTop + controlButtonSize;
-
-        int upButtonLeft = 155;
-        int upButtonTop = 1040; // Adjust position as needed
-        int upButtonRight = upButtonLeft + buttonSize;
-        int upButtonBottom = upButtonTop + buttonSize;
-
-        int downButtonLeft = 155;
-        int downButtonTop = 1285; // Adjust position as needed
-        int downButtonRight = downButtonLeft + buttonSize;
-        int downButtonBottom = downButtonTop + buttonSize;
-
-        int rightButtonLeft = 265;
-        int rightButtonTop = 1160; // Adjust position as needed
-        int rightButtonRight = rightButtonLeft + buttonSize;
-        int rightButtonBottom = rightButtonTop + buttonSize;
-
-        int leftButtonLeft = 50;
-        int leftButtonTop = 1160; // Adjust position as needed
-        int leftButtonRight = leftButtonLeft + buttonSize;
-        int leftButtonBottom = leftButtonTop + buttonSize;
+        // Create the control button
+        controlButton = new ControlButton(controlButtonSize);
 
         // Create the pause button
-        pauseButton = new PauseButton(buttonLeft, buttonTop, buttonRight, buttonBottom);
-
-        // Create the control button
-        controlButton = new ControlButton(controlButtonLeft, controlButtonTop, controlButtonRight, controlButtonBottom);
-        upButton = new UpButton(upButtonLeft, upButtonTop, upButtonRight, upButtonBottom);
-        downButton = new DownButton(downButtonLeft, downButtonTop, downButtonRight, downButtonBottom);
-        rightButton = new RightButton(rightButtonLeft, rightButtonTop, rightButtonRight, rightButtonBottom);
-        leftButton = new LeftButton(leftButtonLeft, leftButtonTop, leftButtonRight, leftButtonBottom);
+        pauseButton = new PauseButton(size.x, buttonSize);
 
         //Create the exit button
         exitButton = new ExitButton(context);
@@ -173,6 +131,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mSugar.reset(frameInSecond);
 
         // reset the bg music
+        soundManager.restartBackgroundMusic(getContext());
         soundManager.startBackgroundMusic();
     }
 
@@ -311,11 +270,6 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Draw the control button
             controlButton.draw(mCanvas, mPaint);
 
-            upButton.draw(mCanvas, mPaint);
-            downButton.draw(mCanvas, mPaint);
-            leftButton.draw(mCanvas, mPaint);
-            rightButton.draw(mCanvas, mPaint);
-
             //set the snake's look different when it eats sugar item
             if(mSnake.isImmune(frameInSecond) && gifOn){
                 mSnake.setGif(getContext());
@@ -400,11 +354,8 @@ class SnakeGame extends SurfaceView implements Runnable {
     private boolean validTouch(MotionEvent motionEvent){
         if (winner || dead) {
             if (exitButton.buttonRange(motionEvent)) {
-                mPaused = true;
-            }
-            else {
-                mPaused = false;
-                newGame();
+                //mPaused = true;
+                //go to another screen
             }
             winner = false;
             dead = false;
@@ -416,14 +367,16 @@ class SnakeGame extends SurfaceView implements Runnable {
             return true;
         }else if(!mPaused && pauseButton.buttonRange(motionEvent)){ //to pause button
             mPaused = true;
+            soundManager.stopBackgroundMusic();
 
         }else if(mPaused && pauseButton.buttonRange(motionEvent)){  //to play button
             mPaused = false;
             mSugar.setNextSpawnTime(frameInSecond);
+            soundManager.startBackgroundMusic();
 
         }else if(!mPaused){                                     //when the game is playing
             // Let the Snake class handle the input
-            mSnake.switchHeading(motionEvent);
+            mSnake.switchHeading(motionEvent, controlButton);
         }
 
         // Don't want to process snake direction for this tap

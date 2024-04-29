@@ -1,19 +1,21 @@
 package com.gamecodeschool.c17snake;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
+import com.gamecodeschool.c17snake.Buttons.ControlButton;
+import com.gamecodeschool.c17snake.Buttons.DownButton;
+import com.gamecodeschool.c17snake.Buttons.LeftButton;
+import com.gamecodeschool.c17snake.Buttons.RightButton;
+import com.gamecodeschool.c17snake.Buttons.UpButton;
+
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 class Snake extends GameObject {
 
@@ -87,10 +89,10 @@ class Snake extends GameObject {
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
 
-        upButton = new UpButton(155, 1040,255,1140);
-        downButton = new DownButton(155,1285,255,1385);
-        rightButton = new RightButton(265,1160,365,1260);
-        leftButton = new LeftButton(50,1160,150,1260);
+        //upButton = new UpButton(155, 1040,255,1140);
+        //downButton = new DownButton(155,1285,255,1385);
+        //rightButton = new RightButton(265,1160,365,1260);
+        //leftButton = new LeftButton(50,1160,150,1260);
 
         duration = -1;
     }
@@ -319,19 +321,25 @@ class Snake extends GameObject {
 
 
     // Handle changing direction
-    void switchHeading(MotionEvent motionEvent) {
+    void switchHeading(MotionEvent motionEvent, ControlButton cB) {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
 
+        char direction = cB.buttonRange(motionEvent);
 
-        if (upButton.contains(x, y)) {
-            rotateUp();
-        } else if (downButton.contains(x, y)) {
-            rotateDown();
-        } else if (leftButton.contains(x, y)) {
-            rotateLeft();
-        } else if (rightButton.contains(x, y)) {
-            rotateRight();
+        switch (direction){
+            case 'u':
+                rotateUp();
+                break;
+            case 'd':
+                rotateDown();
+                break;
+            case 'l':
+                rotateLeft();
+                break;
+            case 'r':
+                rotateRight();
+                break;
         }
     }
     private void rotateUp() {

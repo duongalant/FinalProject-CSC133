@@ -1,4 +1,4 @@
-package com.gamecodeschool.c17snake;
+package com.gamecodeschool.c17snake.Buttons;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,21 +16,21 @@ public class DownButton {
 
     private Rect buttonRect;
 
-    public DownButton(int left, int top, int right, int bottom) {
+    public DownButton() {
+        int size = 100;
+
+        left = 155;
+        top = 1285; // Adjust position as needed
+        right = left + size;
+        bottom = top + size;
+
         buttonRect = new Rect(left, top, right, bottom);
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
     }
 
     public void draw(Canvas canvas, Paint paint) {
-        paint.setColor(Color.WHITE);
-       paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5);
         canvas.drawRect(buttonRect, paint);
 
-       paint.setStyle(Paint.Style.FILL);
+        paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(buttonRect.right - 45, buttonRect.top + 15, buttonRect.right - 55, buttonRect.bottom - 30, paint);
 
         Path path = new Path();
@@ -41,11 +41,9 @@ public class DownButton {
         path.close();
 
         canvas.drawPath(path, paint);
+        paint.setStyle(Paint.Style.STROKE);
     }
 
-    public boolean contains(float x, float y) {
-        return x >= left && x <= right && y >= top && y <= bottom;
-    }
     public boolean buttonRange(MotionEvent motionEvent) {
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();

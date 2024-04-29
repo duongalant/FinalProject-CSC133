@@ -1,4 +1,4 @@
-package com.gamecodeschool.c17snake;
+package com.gamecodeschool.c17snake.Buttons;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,18 +16,18 @@ public class UpButton {
     private Rect buttonRect;
 
 
-    public UpButton(int left, int top, int right, int bottom) {
+    public UpButton() {
+        int size = 100;
+
+        left = 155;
+        top = 1040; // Adjust position as needed
+        right = left + size;
+        bottom = top + size;
+
         buttonRect = new Rect(left, top, right, bottom);
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
     }
 
     public void draw(Canvas canvas, Paint paint) {
-        paint.setColor(Color.WHITE);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5);
         canvas.drawRect(buttonRect, paint);
 
         paint.setStyle(Paint.Style.FILL);
@@ -42,11 +42,7 @@ public class UpButton {
         path.close();
 
         canvas.drawPath(path, paint);
-    }
-
-
-    public boolean contains(float x, float y) {
-        return x >= left && x <= right && y >= top && y <= bottom;
+        paint.setStyle(Paint.Style.STROKE);
     }
 
     public boolean buttonRange(MotionEvent motionEvent) {

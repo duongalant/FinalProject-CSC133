@@ -1,4 +1,4 @@
-package com.gamecodeschool.c17snake;
+package com.gamecodeschool.c17snake.Buttons;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,9 +8,18 @@ import android.view.MotionEvent;
 
 public class PauseButton {
 
+    private int left;
+    private int right;
+    private int top;
+    private int bottom;
     private Rect buttonRect;
 
-    public PauseButton(int left, int top, int right, int bottom) {
+    public PauseButton(int location, int size) {
+        left = location - size - 20; // Adjust position as needed
+        top = 450; // Adjust position as needed
+        right = left + size;
+        bottom = top + size;
+
         buttonRect = new Rect(left, top, right, bottom);
     }
 

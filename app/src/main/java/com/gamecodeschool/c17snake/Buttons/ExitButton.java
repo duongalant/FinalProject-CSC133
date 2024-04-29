@@ -1,4 +1,4 @@
-package com.gamecodeschool.c17snake;
+package com.gamecodeschool.c17snake.Buttons;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
+
+import com.gamecodeschool.c17snake.R;
+
 public class ExitButton{
     private Bitmap mBitmapexit;
     public ExitButton(Context context) {
