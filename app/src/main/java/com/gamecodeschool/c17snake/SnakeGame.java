@@ -64,6 +64,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private Apple mApple;
     private Rock mRock;
     private Sugar mSugar;
+    private Mole mMole;
     private PauseButton pauseButton;
     private ControlButton controlButton;
     private UpButton upButton;
@@ -100,6 +101,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mRock = new Rock(context, mScreenRange, mBlockSize);
         mSugar = new Sugar(context, mScreenRange, mBlockSize);
+        mMole = new Mole(context, mScreenRange, mBlockSize);
 
         // Calculate button size and position
         int buttonSize = 100;
@@ -158,6 +160,8 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Get the apple ready for dinner
         mApple.spawn();
         mRock.spawn();
+        mSugar.spawn();
+        mMole.spawn();
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -223,6 +227,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Move the snake
         mSnake.move();
 
+        // Update the mole
+        //deltaTime / targetFPS
+        mMole.update(10 / 10, getHeight()); // Pass the screen height
+
         // Did the head of the snake eat the apple?
         if(mSnake.checkDinner(mApple.getLocation())){
             mApple.spawn(mSnake.segmentLocations);
@@ -243,6 +251,14 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             if(!mSnake.isImmune(frameInSecond))
                 mScore = mRock.penalty(mScore);
+
+            soundManager.playCrashSound();
+        }
+        if(mSnake.checkEnemy(mMole.getLocation(), frameInSecond)){
+            mMole.spawn(mSnake.segmentLocations);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mMole.penalty(mScore);
 
             soundManager.playCrashSound();
         }
@@ -307,6 +323,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
             mSugar.draw(mCanvas, mPaint);
+            mMole.draw(mCanvas, mPaint);
 
             // Draw the control button
             controlButton.draw(mCanvas, mPaint);
