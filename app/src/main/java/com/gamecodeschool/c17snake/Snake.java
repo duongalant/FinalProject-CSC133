@@ -30,7 +30,6 @@ class Snake extends GameObject {
 
     // Where is the centre of the screen
     // horizontally in pixels?
-    private int halfWayPoint;
     private boolean dead = false;
 
     // For tracking movement Heading
@@ -87,7 +86,6 @@ class Snake extends GameObject {
 
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
-        halfWayPoint = mr.x * ss / 2;
 
         //upButton = new UpButton(155, 1040,255,1140);
         //downButton = new DownButton(155,1285,255,1385);

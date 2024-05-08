@@ -59,6 +59,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     // And an apple
     private Apple mApple;
     private Rock mRock;
+    private Rock mRock2;
     private Sugar mSugar;
     private PauseButton pauseButton;
     private ControlButton controlButton;
@@ -91,6 +92,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mRock = new Rock(context, mScreenRange, mBlockSize);
+        mRock2 = new Rock(context, mScreenRange, mBlockSize);
         mSugar = new Sugar(context, mScreenRange, mBlockSize);
 
         // Calculate button size and position
@@ -187,12 +189,18 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.spawn(mSnake.segmentLocations);
             mScore = mApple.benefit(mScore);
 
+            if(mRock.moreSpawn(mScore))
+                mRock2.resetPosition();
+
             soundManager.playEatSound();
         }
 
         if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
             mScore = mSugar.benefit(mScore, frameInSecond);
             gifOn = true;
+
+            if(mRock.moreSpawn(mScore))
+                mRock2.resetPosition();
 
             soundManager.playSugarSound();
         }
@@ -202,6 +210,15 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             if(!mSnake.isImmune(frameInSecond))
                 mScore = mRock.penalty(mScore);
+
+            soundManager.playCrashSound();
+        }
+
+        if(mSnake.checkEnemy(mRock2.getLocation(), frameInSecond)){
+            mRock2.spawn(mSnake.segmentLocations);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mRock2.penalty(mScore);
 
             soundManager.playCrashSound();
         }
@@ -223,22 +240,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
 
     }
-
-    /*
-    private void checkFriendly(ISpawnable spawnable){
-        spawnable.spawn(mSnake.segmentLocations);
-
-        if(spawnable.isFriendly()){
-            spawnable.benefit(mScore);
-
-            // Play a sound
-            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-        }else{
-            spawnable.penalty(mScore);
-        }
-    }
-    */
-
 
     // Do all the drawing
     public void draw() {    //we can make start page, in-game page
@@ -265,6 +266,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
+            mRock2.draw(mCanvas, mPaint);
             mSugar.draw(mCanvas, mPaint);
 
             // Draw the control button

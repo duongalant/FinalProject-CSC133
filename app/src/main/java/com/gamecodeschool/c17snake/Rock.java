@@ -16,6 +16,8 @@ public class Rock extends GameObject implements ISpawnable {
     private Point mSpawnRange;
     Random random;
 
+    private int nextScore = 10;
+
     /// Set up the rock in the constructor
     Rock(Context context, Point sr, int s){
         random = new Random();
@@ -42,6 +44,14 @@ public class Rock extends GameObject implements ISpawnable {
         while(InSnake.checkSpot(segmentLocations, location, -1)){
             resetPosition();
         }
+    }
+
+    public boolean moreSpawn(int score){
+        if(score >= nextScore){
+            nextScore += 5;
+            return true;
+        }
+        return false;
     }
 
     public void resetPosition(){
