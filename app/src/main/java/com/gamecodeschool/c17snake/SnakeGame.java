@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -58,8 +57,8 @@ class SnakeGame extends SurfaceView implements Runnable {
     private boolean gifOn = false;
     // And an apple
     private Apple mApple;
-    private Rock mRock;
-    private Rock mRock2;
+    Rock mRock;
+    Rock[] rocks = new Rock[3];
     private Sugar mSugar;
     private PauseButton pauseButton;
     private ControlButton controlButton;
@@ -92,7 +91,9 @@ class SnakeGame extends SurfaceView implements Runnable {
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mRock = new Rock(context, mScreenRange, mBlockSize);
-        mRock2 = new Rock(context, mScreenRange, mBlockSize);
+        for(int i = 0; i < rocks.length; i++){
+            rocks[i] = new Rock(context, mScreenRange, mBlockSize);
+        }
         mSugar = new Sugar(context, mScreenRange, mBlockSize);
 
         // Calculate button size and position
@@ -114,10 +115,14 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+        mRock.reset();
 
         // Get the apple ready for dinner
         mApple.spawn();
         mRock.spawn();
+        for(int i = 1; i < rocks.length; i++){
+            rocks[i].location.x = -10;
+        }
 
         // reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -189,8 +194,9 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.spawn(mSnake.segmentLocations);
             mScore = mApple.benefit(mScore);
 
-            if(mRock.moreSpawn(mScore))
-                mRock2.resetPosition();
+            if(mRock.moreSpawn(mScore)){
+                rocks[mRock.getIndex()].resetPosition();
+            }
 
             soundManager.playEatSound();
         }
@@ -199,29 +205,15 @@ class SnakeGame extends SurfaceView implements Runnable {
             mScore = mSugar.benefit(mScore, frameInSecond);
             gifOn = true;
 
-            if(mRock.moreSpawn(mScore))
-                mRock2.resetPosition();
+            if(mRock.moreSpawn(mScore)){
+                rocks[mRock.getIndex()].resetPosition();
+            }
 
             soundManager.playSugarSound();
         }
 
-        if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
-            mRock.spawn(mSnake.segmentLocations);
-
-            if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock.penalty(mScore);
-
-            soundManager.playCrashSound();
-        }
-
-        if(mSnake.checkEnemy(mRock2.getLocation(), frameInSecond)){
-            mRock2.spawn(mSnake.segmentLocations);
-
-            if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock2.penalty(mScore);
-
-            soundManager.playCrashSound();
-        }
+        for(int i = 0; i < rocks.length; i++)
+            checkRock(i);
 
         if(mScore == maxScore){
             mPaused =true;
@@ -239,6 +231,26 @@ class SnakeGame extends SurfaceView implements Runnable {
             dead = true;
         }
 
+    }
+
+    private void checkRock(int index){
+        if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
+            mRock.spawn(mSnake.segmentLocations);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mRock.penalty(mScore);
+
+            soundManager.playCrashSound();
+        }
+
+        if(mSnake.checkEnemy(rocks[index].getLocation(), frameInSecond)){
+            rocks[index].spawn(mSnake.segmentLocations);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mRock.penalty(mScore);
+
+            soundManager.playCrashSound();
+        }
     }
 
     // Do all the drawing
@@ -266,7 +278,8 @@ class SnakeGame extends SurfaceView implements Runnable {
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
-            mRock2.draw(mCanvas, mPaint);
+            for(int i = 0; i < rocks.length; i++)
+                rocks[i].draw(mCanvas, mPaint);
             mSugar.draw(mCanvas, mPaint);
 
             // Draw the control button

@@ -16,7 +16,8 @@ public class Rock extends GameObject implements ISpawnable {
     private Point mSpawnRange;
     Random random;
 
-    private int nextScore = 10;
+    private int nextScore = 3;
+    private int currentIndex = 0;
 
     /// Set up the rock in the constructor
     Rock(Context context, Point sr, int s){
@@ -36,6 +37,10 @@ public class Rock extends GameObject implements ISpawnable {
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
     }
 
+    public void reset(){
+        currentIndex = 0;
+    }
+
     public void spawn(){   //when the game starts
         resetPosition();
     }
@@ -48,10 +53,15 @@ public class Rock extends GameObject implements ISpawnable {
 
     public boolean moreSpawn(int score){
         if(score >= nextScore){
-            nextScore += 5;
+            nextScore += 3;
+            currentIndex++;
             return true;
         }
         return false;
+    }
+
+    public int getIndex(){
+        return currentIndex;
     }
 
     public void resetPosition(){
