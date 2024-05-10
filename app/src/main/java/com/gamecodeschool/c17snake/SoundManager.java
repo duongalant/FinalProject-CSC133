@@ -24,6 +24,7 @@ public class SoundManager {
         // Initialize background music
         bg = MediaPlayer.create(context, R.raw.background);
         bg.setLooping(true);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_GAME)
@@ -78,10 +79,10 @@ public class SoundManager {
         }
     }
 
-    public void release() {
-        if (bg != null) {
-            bg.release();
-            bg = null;
+    public void restartBackgroundMusic(Context context){
+        if (!bg.isPlaying()){
+            bg = MediaPlayer.create(context, R.raw.background);
+            bg.setLooping(true);
         }
     }
     public void playEatSound() {

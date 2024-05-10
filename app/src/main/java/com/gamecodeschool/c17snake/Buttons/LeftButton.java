@@ -1,4 +1,4 @@
-package com.gamecodeschool.c17snake;
+package com.gamecodeschool.c17snake.Buttons;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,18 +15,18 @@ public class LeftButton {
 
     private Rect buttonRect;
 
-    public LeftButton(int left, int top, int right, int bottom) {
+    public LeftButton() {
+        int size = 100;
+
+        left = 50;
+        top = 1160; // Adjust position as needed
+        right = left + size;
+        bottom = top + size;
+
         buttonRect = new Rect(left, top, right, bottom);
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
     }
 
     public void draw(Canvas canvas, Paint paint) {
-        paint.setColor(Color.WHITE);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5);
         canvas.drawRect(buttonRect, paint);
 
         paint.setStyle(Paint.Style.FILL);
@@ -39,11 +39,9 @@ public class LeftButton {
         path.lineTo(buttonRect.left + 35, buttonRect.bottom - 35); // Bottom right corner
         path.close();
         canvas.drawPath(path, paint);
+        paint.setStyle(Paint.Style.STROKE);
     }
 
-    public boolean contains(float x, float y) {
-        return x >= left && x <= right && y >= top && y <= bottom;
-    }
     public boolean buttonRange(MotionEvent motionEvent) {
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();
