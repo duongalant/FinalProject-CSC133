@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Window;
-import android.media.MediaPlayer;
 import android.view.Display;
 
 public class SnakeActivity extends Activity {
     // Declare an instance of SnakeGame
-    SnakeGame mSnakeGame;
+
     MediaPlayer background;
+    SoundManager soundManager;
+
 
     // Set the game up
     @Override
@@ -18,9 +19,15 @@ public class SnakeActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+
         background = MediaPlayer.create(SnakeActivity.this, R.raw.bitmusic);
         background.setLooping(true);
         background.start();
+
+        // Create an instance of SoundManager
+        soundManager = SoundManager.getInstance(this);
+        soundManager.startBackgroundMusic();
+
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
@@ -48,7 +55,11 @@ public class SnakeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mSnakeGame.pause();
+
         background.release();
+
+        soundManager.stopBackgroundMusic();
+
         finish();
     }
 }

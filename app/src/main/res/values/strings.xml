@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="tap_to_play">Tap For New Game!</string>
+    <string name="tap_to_play">Tap to play!</string>
     <string name="for_winner1">Congratulations!</string>
     <string name="for_winner2">You Win</string>
-
-    <string name="for_loser">You Die</string>
+    <string name="for_loser">Game Over!</string>
 </resources>

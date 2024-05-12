@@ -9,6 +9,12 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.MotionEvent;
 
+import com.gamecodeschool.c17snake.Buttons.ControlButton;
+import com.gamecodeschool.c17snake.Buttons.DownButton;
+import com.gamecodeschool.c17snake.Buttons.LeftButton;
+import com.gamecodeschool.c17snake.Buttons.RightButton;
+import com.gamecodeschool.c17snake.Buttons.UpButton;
+
 import java.util.ArrayList;
 
 class Snake extends GameObject {
@@ -24,7 +30,7 @@ class Snake extends GameObject {
 
     // Where is the centre of the screen
     // horizontally in pixels?
-    private int halfWayPoint;
+    private boolean dead = false;
 
     // For tracking movement Heading
     private enum Heading {
@@ -35,15 +41,16 @@ class Snake extends GameObject {
     private Heading heading = Heading.RIGHT;
 
     // A bitmap for each direction the head can face
-    private Bitmap mBitmapHeadRight;
-    private Bitmap mBitmapHeadLeft;
-    private Bitmap mBitmapHeadUp;
-    private Bitmap mBitmapHeadDown;
-
-    // A bitmap for each direction the head can face
     private ArrayList<Bitmap> mBitmapHeads;
     // A bitmap for the body
     private Bitmap mBitmapBody;
+
+    private int snakeHead;
+    private int snakeBody;
+    private int[] headGif = new int[3];
+    private int[] bodyGif = new int[3];
+    private int index;
+    private long duration;      //duration of immunity
 
     private UpButton upButton;
     private DownButton downButton;
@@ -53,7 +60,6 @@ class Snake extends GameObject {
 
 
     Snake(Context context, Point mr, int ss) {
-
         // Initialize our ArrayList
         segmentLocations = new ArrayList<>();
 
@@ -62,25 +68,42 @@ class Snake extends GameObject {
         mSegmentSize = ss;
         mMoveRange = mr;
 
-        createHead(context, ss);
+        snakeHead = R.drawable.head;
+        snakeBody = R.drawable.body;
 
+        headGif[0] = R.drawable.head_1;
+        headGif[1] = R.drawable.head_2;
+        headGif[2] = R.drawable.head_3;
+
+        bodyGif[0] = R.drawable.body_1;
+        bodyGif[1] = R.drawable.body_2;
+        bodyGif[2] = R.drawable.body_3;
+
+        index = 0;
+
+        createHead(context, ss);
+        createBody(context, ss);
+
+        // The halfway point across the screen in pixels
+        // Used to detect which side of screen was pressed
+
+        //upButton = new UpButton(155, 1040,255,1140);
+        //downButton = new DownButton(155,1285,255,1385);
+        //rightButton = new RightButton(265,1160,365,1260);
+        //leftButton = new LeftButton(50,1160,150,1260);
+
+        duration = -1;
+    }
+
+    private void createBody(Context context, int ss){
         // Create and scale the body
         mBitmapBody = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.body);
+                        snakeBody);
 
         mBitmapBody = Bitmap
                 .createScaledBitmap(mBitmapBody,
                         ss, ss, false);
-
-        // The halfway point across the screen in pixels
-        // Used to detect which side of screen was pressed
-        halfWayPoint = mr.x * ss / 2;
-
-        upButton = new UpButton(155, 1040,255,1140);
-        downButton = new DownButton(155,1285,255,1385);
-        rightButton = new RightButton(265,1160,365,1260);
-        leftButton = new LeftButton(50,1160,150,1260);
     }
     private void createHead(Context context, int ss){
         mBitmapHeads = new ArrayList<>();
@@ -88,7 +111,7 @@ class Snake extends GameObject {
         // Create and scale the bitmaps
         for(int i = 0; i < 4; i++){
             mBitmapHeads.add(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.head));
+                    snakeHead));
         }
 
         // Modify the bitmaps to face the snake head
@@ -110,7 +133,7 @@ class Snake extends GameObject {
 
     // Get the snake ready for a new game
     void reset(int w, int h) {
-
+        dead = false;
         // Reset the heading
         heading = Heading.RIGHT;
 
@@ -119,7 +142,10 @@ class Snake extends GameObject {
 
         // Start with a single snake segment
         segmentLocations.add(new Point(w / 2, h / 2));
+
+        duration = -1;
     }
+
 
     void move() {
         // Move the body
@@ -162,8 +188,6 @@ class Snake extends GameObject {
 
     boolean detectDeath() {
         // Has the snake died?
-        boolean dead = false;
-
         boolean overLeft = segmentLocations.get(0).x <= -1;
         boolean overRight = segmentLocations.get(0).x > mMoveRange.x;
         boolean overTop = segmentLocations.get(0).y <= -1;
@@ -178,9 +202,6 @@ class Snake extends GameObject {
         if(InSnake.checkSpot(segmentLocations, segmentLocations.get(0))) dead = true;
 
         return dead;
-    }
-    boolean detectDeath(int mScore){
-        return mScore < 0;
     }
 
     boolean checkDinner(Point l) {
@@ -199,20 +220,42 @@ class Snake extends GameObject {
         return false;
     }
 
-    boolean checkEnemy(Point l){
+    boolean checkSugar(Point l, long currentTime) {
+        //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
 
-            if(segmentLocations.size() > 1){
-                segmentLocations.remove(segmentLocations.size()-1);
-            }
+            segmentLocations.add(new Point(-10, -10));
+
+            getImmune(currentTime);
             return true;
         }
         return false;
     }
 
-    @Override
+    private void getImmune(long currentTime){
+        duration = currentTime + 6;    //immune for 6 sec
+    }
+    boolean isImmune(long currentTime){     //if the snake is immune
+        return currentTime < duration;
+    }
+
+    boolean checkEnemy(Point l, long currentTime){
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+
+            if(segmentLocations.size() > 1 && !isImmune(currentTime)){
+                segmentLocations.remove(segmentLocations.size()-1);
+            }else if(!isImmune(currentTime)){
+                dead = true;
+            }
+            return true;
+        }
+        return false;
+    }
+    //@Override
     public void draw(Canvas canvas, Paint paint) {
+        //canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
@@ -254,21 +297,47 @@ class Snake extends GameObject {
                         * mSegmentSize, paint);
     }
 
+    public void setGif(Context context){
+        snakeHead = headGif[index];
+        snakeBody = bodyGif[index];
+
+        createHead(context, mSegmentSize);
+        createBody(context, mSegmentSize);
+
+        index++;
+        if(index > 2)
+            index = 0;
+    }
+
+    public void setNormal(Context context){
+        snakeHead = R.drawable.head;
+        snakeBody = R.drawable.body;
+
+        createHead(context, mSegmentSize);
+        createBody(context, mSegmentSize);
+    }
+
 
     // Handle changing direction
-    void switchHeading(MotionEvent motionEvent) {
+    void switchHeading(MotionEvent motionEvent, ControlButton cB) {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
 
+        char direction = cB.buttonRange(motionEvent);
 
-        if (upButton.contains(x, y)) {
-            rotateUp();
-        } else if (downButton.contains(x, y)) {
-            rotateDown();
-        } else if (leftButton.contains(x, y)) {
-            rotateLeft();
-        } else if (rightButton.contains(x, y)) {
-            rotateRight();
+        switch (direction){
+            case 'u':
+                rotateUp();
+                break;
+            case 'd':
+                rotateDown();
+                break;
+            case 'l':
+                rotateLeft();
+                break;
+            case 'r':
+                rotateRight();
+                break;
         }
     }
     private void rotateUp() {

@@ -14,6 +14,4 @@ public interface ISpawnable {
     void spawn(ArrayList<Point> segmentLocations);
 
     void resetPosition();
-
-    boolean isFriendly();
 }
