@@ -63,6 +63,8 @@ class SnakeGame extends SurfaceView implements Runnable {
     private ColdApple mColdApple;
     private ISpawnable mSpawnableColdApple;
 
+    private FastApple mFastApple;
+
     Rock mRock;
     Rock[] rocks = new Rock[3];
 
@@ -76,10 +78,12 @@ class SnakeGame extends SurfaceView implements Runnable {
 
 
     private final int NORMAL_SPEED = 1;
-    private final double SLOWED_SPEED = 0.5; // Adjust as needed
+    private final int FAST_SPEED = 3;
+    private final double SLOWED_SPEED = 0.2; // Adjust as needed
 
     private int mSnakeSpeed = NORMAL_SPEED;
     private boolean mIsSlowed = false;
+    private boolean mIsFast = true;
     private long mCooldownStartTime = 0;
 
     // This is the constructor method that gets called
@@ -109,6 +113,9 @@ class SnakeGame extends SurfaceView implements Runnable {
         mSnake = new Snake(context, mScreenRange, mBlockSize);
         mApple = new Apple(context, mScreenRange, mBlockSize);
         mColdApple = new ColdApple(new Apple(context, mScreenRange, mBlockSize), context, mScreenRange, mBlockSize);
+        mFastApple = new FastApple(new Apple(context, mScreenRange, mBlockSize), context, mScreenRange, mBlockSize);
+
+
         mRock = new Rock(context, mScreenRange, mBlockSize);
         for(int i = 0; i < rocks.length; i++){
             rocks[i] = new Rock(context, mScreenRange, mBlockSize);
@@ -139,6 +146,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Get the apple ready for dinner
         mApple.spawn();
         mColdApple.spawn();
+        mFastApple.spawn();
         mRock.spawn();
         for(int i = 1; i < rocks.length; i++){
             rocks[i].location.x = -10;
@@ -213,8 +221,16 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
         if (mIsSlowed) {
             // Check if the cooldown period has elapsed
-            long COOLDOWN_DURATION = 5000;
+            long COOLDOWN_DURATION = 8000;
             if (System.currentTimeMillis() - mCooldownStartTime >= COOLDOWN_DURATION) {
+                // Cooldown period has elapsed, revert to normal speed
+                mIsSlowed = true;
+                mSnakeSpeed = NORMAL_SPEED;
+            }
+        }if (mIsFast) {
+            // Check if the cooldown period has elapsed
+            long COOLDOWN_DURATION = 8000;
+            if (System.currentTimeMillis() + mCooldownStartTime >= COOLDOWN_DURATION) {
                 // Cooldown period has elapsed, revert to normal speed
                 mIsSlowed = false;
                 mSnakeSpeed = NORMAL_SPEED;
@@ -246,6 +262,15 @@ class SnakeGame extends SurfaceView implements Runnable {
             mIsSlowed = true;
             mCooldownStartTime = System.currentTimeMillis();
             mSnakeSpeed = (int) (SLOWED_SPEED * NORMAL_SPEED);
+
+            soundManager.playEatSound();
+
+        }
+
+        if(mSnake.checkDinner(mFastApple.getLocation())) {
+            mFastApple.spawn(mSnake.segmentLocations);
+            mScore = mFastApple.benefit(mScore);
+            mSnakeSpeed = (FAST_SPEED);
 
             soundManager.playEatSound();
 
@@ -337,6 +362,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
             mColdApple.draw(mCanvas,mPaint);
+            mFastApple.draw(mCanvas,mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
             for(int i = 0; i < rocks.length; i++)

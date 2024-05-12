@@ -14,6 +14,7 @@ public class FastApple extends GameObject implements ISpawnable {
     private int nextScore = 2;
     private ISpawnable apple;
     private Point mSpawnRange;
+    private SnakeGame mSnakeGame;
 
     Random random;
 
@@ -29,6 +30,8 @@ public class FastApple extends GameObject implements ISpawnable {
         // Hide the apple off-screen until the game starts
         location.x = -10;
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
+        SnakeGame snakeGame;
+
 
     }
 
@@ -56,6 +59,7 @@ public class FastApple extends GameObject implements ISpawnable {
     @Override
     public int benefit(int mScore) {
         return mScore += 1;
+
     }
 
     public void reset(){
