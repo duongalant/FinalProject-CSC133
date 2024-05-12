@@ -10,6 +10,7 @@ import android.media.SoundPool;
 import android.os.Build;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class SoundManager {
     private static SoundManager instance;
@@ -24,6 +25,7 @@ public class SoundManager {
         // Initialize background music
         bg = MediaPlayer.create(context, R.raw.background);
         bg.setLooping(true);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_GAME)
@@ -37,7 +39,6 @@ public class SoundManager {
         } else {
             soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         }
-
         try {
             AssetManager assetManager = context.getAssets();
             AssetFileDescriptor descriptor;
@@ -58,7 +59,6 @@ public class SoundManager {
             e.printStackTrace();
         }
     }
-
     public static synchronized SoundManager getInstance(Context context) {
         if (instance == null) {
             instance = new SoundManager(context.getApplicationContext());
@@ -78,10 +78,10 @@ public class SoundManager {
         }
     }
 
-    public void release() {
-        if (bg != null) {
-            bg.release();
-            bg = null;
+    public void restartBackgroundMusic(Context context){
+        if (!bg.isPlaying()){
+            bg = MediaPlayer.create(context, R.raw.background);
+            bg.setLooping(true);
         }
     }
     public void playEatSound() {

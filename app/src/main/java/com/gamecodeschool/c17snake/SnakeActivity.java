@@ -49,7 +49,6 @@ public class SnakeActivity extends Activity {
         super.onPause();
         mSnakeGame.pause();
         soundManager.stopBackgroundMusic();
-        soundManager.release();
         finish();
     }
 }
