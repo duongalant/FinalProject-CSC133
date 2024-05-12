@@ -29,7 +29,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private volatile boolean gotReset = true;
     private volatile boolean winner = false;
     private volatile boolean dead = false;
-
+    private volatile boolean notInGame = true;
     // The size in segments of the playable area
     private final int NUM_BLOCKS_WIDE = 40;
     private int mNumBlocksHigh;
@@ -284,44 +284,45 @@ class SnakeGame extends SurfaceView implements Runnable {
             mPaint.setTextSize(120);
 
             mPaint.setTypeface(mAtariFont);
+            if (notInGame) {
 
-            // Draw the score
-            drawingText("" + mScore, 20, 120);
-
-            //mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
-
-            // Draw the objects
-            mApple.draw(mCanvas, mPaint);
-            mSnake.draw(mCanvas, mPaint);
-            mRock.draw(mCanvas, mPaint);
-            for(int i = 0; i < rocks.length; i++)
-                rocks[i].draw(mCanvas, mPaint);
-            mSugar.draw(mCanvas, mPaint);
-            mMole.draw(mCanvas, mPaint);
-
-            // Draw the control button
-            controlButton.draw(mCanvas, mPaint);
-
-            //set the snake's look different when it eats sugar item
-            if(mSnake.isImmune(frameInSecond) && gifOn){
-                mSnake.setGif(getContext());
-            }else if (gifOn){   //when snake is back normal from immunity
-                mSnake.setNormal(getContext());
-                soundManager.startBackgroundMusic();
-
-                gifOn = false;
+                drawingText("Title", 500, 800); //change title
+            } else {
+                inGameDrawing();
+                //set the snake's look different when it eats sugar item
+                if (mSnake.isImmune(frameInSecond) && gifOn) {
+                    mSnake.setGif(getContext());
+                } else if (gifOn) {   //when snake is back normal from immunity
+                    mSnake.setNormal(getContext());
+                    soundManager.startBackgroundMusic();
+                    gifOn = false;
+                }
+                mSugar.checkSpawn(mSnake.segmentLocations, frameInSecond, mCanvas, mPaint);
+                drawText();
             }
-
-            mSugar.checkSpawn(mSnake.segmentLocations, frameInSecond, mCanvas, mPaint);
-
-            // Draw the pause button
-            pauseButton.draw(mCanvas, mPaint);
-
-            drawText();
-
             // Unlock the mCanvas and reveal the graphics for this frame
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);
         }
+    }
+    private void inGameDrawing() {
+        // Draw the score
+        drawingText("" + mScore, 20, 120);
+
+        //mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
+
+        // Draw the objects
+        mApple.draw(mCanvas, mPaint);
+        mSnake.draw(mCanvas, mPaint);
+        mRock.draw(mCanvas, mPaint);
+        for (int i = 0; i < rocks.length; i++)
+            rocks[i].draw(mCanvas, mPaint);
+        mSugar.draw(mCanvas, mPaint);
+        mMole.draw(mCanvas, mPaint);
+
+        // Draw the control button
+        controlButton.draw(mCanvas, mPaint);
+        // Draw the pause button
+        pauseButton.draw(mCanvas, mPaint);
     }
 
     private void drawText(){
@@ -363,12 +364,12 @@ class SnakeGame extends SurfaceView implements Runnable {
                 drawingText(getResources().getString(R.string.tap_to_play), 100, 800);
             }
         }
+
     }
     //method to reduce duplicated code
     private void drawingText(String text, int x, int y) {
         mCanvas.drawText(text, x, y, mPaint);
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
@@ -386,11 +387,13 @@ class SnakeGame extends SurfaceView implements Runnable {
     private boolean validTouch(MotionEvent motionEvent){
         if (winner || dead) {
             if (exitButton.buttonRange(motionEvent)) {
-                //mPaused = true;
                 //go to another screen
+                notInGame = true;
             }
             winner = false;
             dead = false;
+        } else if (mPaused && notInGame) {
+            notInGame = false;
         }else if (mPaused && gotReset) {  //for new start
             mPaused = false;
             gotReset = false;

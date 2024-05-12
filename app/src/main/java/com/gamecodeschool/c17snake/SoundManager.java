@@ -10,7 +10,6 @@ import android.media.SoundPool;
 import android.os.Build;
 
 import java.io.IOException;
-
 public class SoundManager {
     private static SoundManager instance;
     private SoundPool soundPool;
@@ -38,7 +37,6 @@ public class SoundManager {
         } else {
             soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         }
-
         try {
             AssetManager assetManager = context.getAssets();
             AssetFileDescriptor descriptor;
@@ -59,7 +57,6 @@ public class SoundManager {
             e.printStackTrace();
         }
     }
-
     public static synchronized SoundManager getInstance(Context context) {
         if (instance == null) {
             instance = new SoundManager(context.getApplicationContext());
