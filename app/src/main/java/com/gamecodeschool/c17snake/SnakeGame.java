@@ -285,8 +285,10 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             mPaint.setTypeface(mAtariFont);
             if (notInGame) {
-
-                drawingText("Title", 500, 800); //change title
+                mPaint.setTextSize(200);
+                drawingText("Snake Game", mCanvas.getWidth()/8, mCanvas.getHeight()/2); //change title
+                mPaint.setTextSize(50);
+                drawingText("Click Anywhere to Start the Game", mCanvas.getWidth()/4 - 100, mCanvas.getHeight()/2 + 200);
             } else {
                 inGameDrawing();
                 //set the snake's look different when it eats sugar item
@@ -353,7 +355,7 @@ class SnakeGame extends SurfaceView implements Runnable {
                         mCanvas.getWidth() / 6, 400);
                 mPaint.setTextSize(60);
                 drawingText("Score:" + mScore, mCanvas.getWidth() / 6, 500);
-                drawingText("Tap anywhere for new game", mCanvas.getWidth() / 6, 600);
+                drawingText("Tap anywhere to restart!", mCanvas.getWidth() / 6, 600);
                 //draw the menu button
                 exitButton.draw(mCanvas, mPaint);
             }else{
