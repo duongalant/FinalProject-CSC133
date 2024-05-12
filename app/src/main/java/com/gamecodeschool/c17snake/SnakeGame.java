@@ -285,6 +285,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             mPaint.setTypeface(mAtariFont);
             if (notInGame) {
+
                 drawingText("Title", 500, 800); //change title
             } else {
                 inGameDrawing();
