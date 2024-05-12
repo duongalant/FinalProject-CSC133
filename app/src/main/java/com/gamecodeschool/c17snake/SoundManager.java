@@ -10,8 +10,6 @@ import android.media.SoundPool;
 import android.os.Build;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
 public class SoundManager {
     private static SoundManager instance;
     private SoundPool soundPool;
