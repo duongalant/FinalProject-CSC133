@@ -94,12 +94,12 @@ public class SoundManager {
     }
 
     public void playDeathSound() {
-        stopBackgroundMusic();      //Singleton
+        stopBackgroundMusic();
 
         soundPool.play(deathSoundId, 1, 1, 0, 0, 1);
     }
     public void playSugarSound() {
-        stopBackgroundMusic();      //Singleton
+        stopBackgroundMusic();
 
         soundPool.play(sugarSoundId, 1, 1, 0, 0, 1);
     }
