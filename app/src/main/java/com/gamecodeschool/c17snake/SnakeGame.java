@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.media.SoundPool;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -58,14 +58,33 @@ class SnakeGame extends SurfaceView implements Runnable {
     private boolean gifOn = false;
     // And an apple
     private Apple mApple;
+    private ISpawnable mSpawnableApple;
+
+    private ColdApple mColdApple;
+    private ISpawnable mSpawnableColdApple;
+
+    private FastApple mFastApple;
+
     Rock mRock;
     Rock[] rocks = new Rock[3];
+
+    Apple[] apples = new Apple[2];
     private Sugar mSugar;
     private Mole mMole;
-    private SnakeComponent cSnake;
     private PauseButton pauseButton;
     private ControlButton controlButton;
     private ExitButton exitButton;
+    private KeyEvent keyEvent;
+
+
+    private final int NORMAL_SPEED = 1;
+    private final int FAST_SPEED = 3;
+    private final double SLOWED_SPEED = 0.2; // Adjust as needed
+
+    private int mSnakeSpeed = NORMAL_SPEED;
+    private boolean mIsSlowed = false;
+    private boolean mIsFast = true;
+    private long mCooldownStartTime = 0;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -91,8 +110,12 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         mScreenRange = new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh);
         // Call the constructors of our two game objects
-        mApple = new Apple(context, mScreenRange, mBlockSize);
         mSnake = new Snake(context, mScreenRange, mBlockSize);
+        mApple = new Apple(context, mScreenRange, mBlockSize);
+        mColdApple = new ColdApple(new Apple(context, mScreenRange, mBlockSize), context, mScreenRange, mBlockSize);
+        mFastApple = new FastApple(new Apple(context, mScreenRange, mBlockSize), context, mScreenRange, mBlockSize);
+
+
         mRock = new Rock(context, mScreenRange, mBlockSize);
         for(int i = 0; i < rocks.length; i++){
             rocks[i] = new Rock(context, mScreenRange, mBlockSize);
@@ -117,12 +140,13 @@ class SnakeGame extends SurfaceView implements Runnable {
     // Called to start a new game
     public void newGame() {
 
-        // reset the snake
-        mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
-        mRock.reset();
 
+        mRock.reset();
+        mColdApple.reset();
         // Get the apple ready for dinner
         mApple.spawn();
+        mColdApple.spawn();
+        mFastApple.spawn();
         mRock.spawn();
         for(int i = 1; i < rocks.length; i++){
             rocks[i].location.x = -10;
@@ -192,24 +216,64 @@ class SnakeGame extends SurfaceView implements Runnable {
     public void update() {
 
         // Move the snake
-        mSnake.move();
+        for (int i = 0; i < mSnakeSpeed; i++) {
+            mSnake.move();
+        }
+        if (mIsSlowed) {
+            // Check if the cooldown period has elapsed
+            long COOLDOWN_DURATION = 8000;
+            if (System.currentTimeMillis() - mCooldownStartTime >= COOLDOWN_DURATION) {
+                // Cooldown period has elapsed, revert to normal speed
+                mIsSlowed = true;
+                mSnakeSpeed = NORMAL_SPEED;
+            }
+        }if (mIsFast) {
+            // Check if the cooldown period has elapsed
+            long COOLDOWN_DURATION = 8000;
+            if (System.currentTimeMillis() + mCooldownStartTime >= COOLDOWN_DURATION) {
+                // Cooldown period has elapsed, revert to normal speed
+                mIsSlowed = false;
+                mSnakeSpeed = NORMAL_SPEED;
+            }
+        }
+
 
         // Update the mole
         //deltaTime / targetFPS
         mMole.update(10 / 10, getHeight()); // Pass the screen height
-
-        //mSnake.checkBehavior(mApple);
 
         // Did the head of the snake eat the apple?
         if(mSnake.checkDinner(mApple.getLocation())){
             mApple.spawn(mSnake.segmentLocations);
             mScore = mApple.benefit(mScore);
 
+
             if(mRock.moreSpawn(mScore)){
                 rocks[mRock.getIndex()].resetPosition();
             }
 
             soundManager.playEatSound();
+        }
+
+        if(mSnake.checkDinner(mColdApple.getLocation())){
+            mColdApple.spawn(mSnake.segmentLocations);
+            mScore = mColdApple.benefit(mScore);
+
+            mIsSlowed = true;
+            mCooldownStartTime = System.currentTimeMillis();
+            mSnakeSpeed = (int) (SLOWED_SPEED * NORMAL_SPEED);
+
+            soundManager.playEatSound();
+
+        }
+
+        if(mSnake.checkDinner(mFastApple.getLocation())) {
+            mFastApple.spawn(mSnake.segmentLocations);
+            mScore = mFastApple.benefit(mScore);
+            mSnakeSpeed = (FAST_SPEED);
+
+            soundManager.playEatSound();
+
         }
 
         if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
@@ -220,19 +284,23 @@ class SnakeGame extends SurfaceView implements Runnable {
                 rocks[mRock.getIndex()].resetPosition();
             }
 
+
             soundManager.playSugarSound();
         }
 
-        if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
-            mRock.spawn(mSnake.segmentLocations);
+        for(int i = 0; i < rocks.length; i++)
+            checkRock(i);
+
+        if(mSnake.checkEnemy(mMole.getLocation(), frameInSecond)){
+            mMole.spawn(mSnake.segmentLocations);
 
             if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock.penalty(mScore);
+                mScore = mMole.penalty(mScore);
 
             soundManager.playCrashSound();
         }
 
-        if(mScore >= maxScore){
+        if(mScore == maxScore){
             mPaused =true;
             gotReset = true;
             winner = true;
@@ -248,6 +316,26 @@ class SnakeGame extends SurfaceView implements Runnable {
             dead = true;
         }
 
+    }
+
+    private void checkRock(int index){
+        if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
+            mRock.spawn(mSnake.segmentLocations);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mRock.penalty(mScore);
+
+            soundManager.playCrashSound();
+        }
+
+        if(mSnake.checkEnemy(rocks[index].getLocation(), frameInSecond)){
+            rocks[index].spawn(mSnake.segmentLocations);
+
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mRock.penalty(mScore);
+
+            soundManager.playCrashSound();
+        }
     }
 
     // Do all the drawing
@@ -273,6 +361,8 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             // Draw the objects
             mApple.draw(mCanvas, mPaint);
+            mColdApple.draw(mCanvas,mPaint);
+            mFastApple.draw(mCanvas,mPaint);
             mSnake.draw(mCanvas, mPaint);
             mRock.draw(mCanvas, mPaint);
             for(int i = 0; i < rocks.length; i++)
@@ -350,7 +440,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         mCanvas.drawText(text, x, y, mPaint);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
@@ -389,13 +478,12 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         }else if(!mPaused){                                     //when the game is playing
             // Let the Snake class handle the input
-            mSnake.switchHeading(motionEvent, controlButton);
+            mSnake.switchHeading(motionEvent, controlButton, keyEvent);
         }
 
         // Don't want to process snake direction for this tap
         return true;
     }
-
 
     // Stop the thread
     public void pause() {

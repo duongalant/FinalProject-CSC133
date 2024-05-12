@@ -25,9 +25,9 @@ public class Rock extends GameObject implements ISpawnable {
 
         // Make a note of the passed in spawn range
         mSpawnRange = sr;
-        // Make a note of the size of an apple
+        // Make a note of the size of rock
         mSize = s;
-        // Hide the apple off-screen until the game starts
+        // Hide the rock off-screen until the game starts
         location.x = -10;
 
         // Load the image to the bitmap
@@ -51,6 +51,8 @@ public class Rock extends GameObject implements ISpawnable {
         }
     }
 
+
+
     public boolean moreSpawn(int score){
         if(score >= nextScore){
             nextScore += 3;
@@ -73,6 +75,13 @@ public class Rock extends GameObject implements ISpawnable {
     public boolean isFriendly(){
         return friendly;
     }
+
+    @Override
+    public int benefit(int mScore) {
+
+        return 0;
+    }
+
     public int penalty(int mScore){
         return mScore -= 1;
     }

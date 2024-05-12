@@ -15,8 +15,13 @@ public class PauseButton {
     private Rect buttonRect;
 
     public PauseButton(int location, int size) {
-        left = location - size - 20; // Adjust position as needed
-        top = 450; // Adjust position as needed
+        //left = location - size - 20; // Adjust position as needed
+       // top = 450; // Adjust position as needed
+      //  right = left + size;
+       // bottom = top + size;
+
+        left = 157;
+        top = 1160; // Adjust position as needed
         right = left + size;
         bottom = top + size;
 
@@ -25,7 +30,7 @@ public class PauseButton {
 
     public void draw(Canvas canvas, Paint paint) {
         // Draw the pause button rectangle
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.DKGRAY);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
         canvas.drawRect(buttonRect, paint);
