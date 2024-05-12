@@ -10,10 +10,6 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 
 import com.gamecodeschool.c17snake.Buttons.ControlButton;
-import com.gamecodeschool.c17snake.Buttons.DownButton;
-import com.gamecodeschool.c17snake.Buttons.LeftButton;
-import com.gamecodeschool.c17snake.Buttons.RightButton;
-import com.gamecodeschool.c17snake.Buttons.UpButton;
 
 import java.util.ArrayList;
 
@@ -30,7 +26,6 @@ class Snake extends GameObject {
 
     // Where is the centre of the screen
     // horizontally in pixels?
-    private int halfWayPoint;
     private boolean dead = false;
 
     // For tracking movement Heading
@@ -52,11 +47,6 @@ class Snake extends GameObject {
     private int[] bodyGif = new int[3];
     private int index;
     private long duration;      //duration of immunity
-
-    private UpButton upButton;
-    private DownButton downButton;
-    private LeftButton leftButton;
-    private RightButton rightButton;
 
 
 
@@ -84,10 +74,6 @@ class Snake extends GameObject {
 
         createHead(context, ss);
         createBody(context, ss);
-
-        // The halfway point across the screen in pixels
-        // Used to detect which side of screen was pressed
-        halfWayPoint = mr.x * ss / 2;
 
         //upButton = new UpButton(155, 1040,255,1140);
         //downButton = new DownButton(155,1285,255,1385);
@@ -319,12 +305,13 @@ class Snake extends GameObject {
         createBody(context, mSegmentSize);
     }
 
+    public void setDead(boolean d){
+        this.dead = d;
+    }
+
 
     // Handle changing direction
     void switchHeading(MotionEvent motionEvent, ControlButton cB) {
-        float x = motionEvent.getX();
-        float y = motionEvent.getY();
-
         char direction = cB.buttonRange(motionEvent);
 
         switch (direction){
