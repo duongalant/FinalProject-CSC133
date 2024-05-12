@@ -79,7 +79,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     private final int NORMAL_SPEED = 1;
     private final int FAST_SPEED = 3;
-    private final double SLOWED_SPEED = 0.2; // Adjust as needed
+    private final double SLOWED_SPEED = 0.1; // Adjust as needed
 
     private int mSnakeSpeed = NORMAL_SPEED;
     private boolean mIsSlowed = false;
