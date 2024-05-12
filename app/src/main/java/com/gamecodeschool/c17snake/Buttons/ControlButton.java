@@ -34,7 +34,7 @@ public class ControlButton {
     }
 
     public void draw(Canvas canvas, Paint paint) {
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
         canvas.drawRect(buttonRect, paint);

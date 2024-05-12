@@ -50,4 +50,7 @@ public class DownButton {
 
         return buttonRect.contains(touchX, touchY);
     }
-}
+
+
+    }
+

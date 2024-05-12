@@ -28,6 +28,8 @@ public class SnakeActivity extends Activity {
         Point size = new Point();
         display.getSize(size);
 
+
+
         // Create a new instance of the SnakeEngine class
         mSnakeGame = new SnakeGame(this, size);
 
@@ -51,4 +53,5 @@ public class SnakeActivity extends Activity {
         soundManager.stopBackgroundMusic();
         finish();
     }
+
 }

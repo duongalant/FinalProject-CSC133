@@ -21,7 +21,7 @@ public class SoundManager {
 
     private SoundManager(Context context) {
         // Initialize background music
-        bg = MediaPlayer.create(context, R.raw.background);
+        bg = MediaPlayer.create(context, R.raw.bitmusic);
         bg.setLooping(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -78,7 +78,7 @@ public class SoundManager {
 
     public void restartBackgroundMusic(Context context){
         if (!bg.isPlaying()){
-            bg = MediaPlayer.create(context, R.raw.background);
+            bg = MediaPlayer.create(context, R.raw.bitmusic);
             bg.setLooping(true);
         }
     }
