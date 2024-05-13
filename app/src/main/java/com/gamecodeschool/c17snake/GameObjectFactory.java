@@ -12,6 +12,8 @@ public class GameObjectFactory {
                 return new ColdApple(context, sr, s);
             case FAST_APPLE:
                 return new FastApple(context, sr, s);
+            case BLACK_APPLE:
+                return new BlackApple(context, sr, s);
             case ROCK:
                 return new Rock(context, sr, s);
             case SUGAR:
@@ -24,6 +26,7 @@ public class GameObjectFactory {
         NORMAL_APPLE,
         COLD_APPLE,
         FAST_APPLE,
+        BLACK_APPLE,
         ROCK,
         SUGAR
     }
