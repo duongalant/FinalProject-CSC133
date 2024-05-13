@@ -8,7 +8,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-class Apple extends GameObject implements ISpawnable{
+public class Apple extends GameObject implements ISpawnable{
     // The range of values we can choose from
     // to spawn an apple
 
@@ -33,6 +33,7 @@ class Apple extends GameObject implements ISpawnable{
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
     }
 
+    @Override
     public void spawn(){   //when the game starts
         resetPosition();
     }
@@ -50,10 +51,12 @@ class Apple extends GameObject implements ISpawnable{
     }
 
     public boolean isFriendly(){
+
         return friendly;
     }
 
     public int benefit(int mScore){
+
         return mScore += 1;
     }
 }

@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.gamecodeschool.c17snake.Buttons.ControlButton;
@@ -17,7 +18,7 @@ import com.gamecodeschool.c17snake.Buttons.UpButton;
 
 import java.util.ArrayList;
 
-class Snake extends GameObject implements GameObserver{
+public class Snake extends GameObject{
 
     // The location in the grid of all the segments
     public ArrayList<Point> segmentLocations;
@@ -32,15 +33,7 @@ class Snake extends GameObject implements GameObserver{
     // horizontally in pixels?
     private boolean dead = false;
 
-    @Override
-    public void onAppleEaten() {
 
-    }
-
-    @Override
-    public void onObstacleCollision() {
-
-    }
 
     // For tracking movement Heading
     private enum Heading {
@@ -48,7 +41,7 @@ class Snake extends GameObject implements GameObserver{
     }
 
     // Start by heading to the right
-    private Heading heading = Heading.RIGHT;
+    private static Heading heading = Heading.RIGHT;
 
     // A bitmap for each direction the head can face
     private ArrayList<Bitmap> mBitmapHeads;
@@ -66,6 +59,7 @@ class Snake extends GameObject implements GameObserver{
     private DownButton downButton;
     private LeftButton leftButton;
     private RightButton rightButton;
+    private int mSnakeSpeed;
 
 
 
@@ -105,7 +99,7 @@ class Snake extends GameObject implements GameObserver{
         duration = -1;
     }
 
-    private void createBody(Context context, int ss){
+    private void createBody(Context context, int ss) {
         // Create and scale the body
         mBitmapBody = BitmapFactory
                 .decodeResource(context.getResources(),
@@ -115,11 +109,12 @@ class Snake extends GameObject implements GameObserver{
                 .createScaledBitmap(mBitmapBody,
                         ss, ss, false);
     }
-    private void createHead(Context context, int ss){
+
+    private void createHead(Context context, int ss) {
         mBitmapHeads = new ArrayList<>();
 
         // Create and scale the bitmaps
-        for(int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             mBitmapHeads.add(BitmapFactory.decodeResource(context.getResources(),
                     snakeHead));
         }
@@ -133,11 +128,11 @@ class Snake extends GameObject implements GameObserver{
         matrix.preScale(-1, 1);
 
         int[] rotates = {-90, 180, -1};
-        for(int i = 1; i < mBitmapHeads.size(); i++){
+        for (int i = 1; i < mBitmapHeads.size(); i++) {
             mBitmapHeads.set(i, Bitmap.createBitmap(mBitmapHeads.get(0), 0, 0, ss, ss, matrix, true));
 
             // A matrix for rotating
-            matrix.preRotate(rotates[i-1]);
+            matrix.preRotate(rotates[i - 1]);
         }
     }
 
@@ -169,8 +164,10 @@ class Snake extends GameObject implements GameObserver{
             segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
         }
         movingHead();
+    
 
     }
+
     private void movingHead() {
         // Move the head in the appropriate heading
         // Get the existing head position
@@ -209,7 +206,7 @@ class Snake extends GameObject implements GameObserver{
         }
 
         //Eaten itself?
-        if(InSnake.checkSpot(segmentLocations, segmentLocations.get(0))) dead = true;
+        if (InSnake.checkSpot(segmentLocations, segmentLocations.get(0))) dead = true;
 
         return dead;
     }
@@ -243,26 +240,28 @@ class Snake extends GameObject implements GameObserver{
         return false;
     }
 
-    private void getImmune(long currentTime){
+    private void getImmune(long currentTime) {
         duration = currentTime + 6;    //immune for 6 sec
     }
-    boolean isImmune(long currentTime){     //if the snake is immune
+
+    boolean isImmune(long currentTime) {     //if the snake is immune
         return currentTime < duration;
     }
 
-    boolean checkEnemy(Point l, long currentTime){
+    boolean checkEnemy(Point l, long currentTime) {
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
 
-            if(segmentLocations.size() > 1 && !isImmune(currentTime)){
-                segmentLocations.remove(segmentLocations.size()-1);
-            }else if(!isImmune(currentTime)){
+            if (segmentLocations.size() > 1 && !isImmune(currentTime)) {
+                segmentLocations.remove(segmentLocations.size() - 1);
+            } else if (!isImmune(currentTime)) {
                 dead = true;
             }
             return true;
         }
         return false;
     }
+
     //@Override
     public void draw(Canvas canvas, Paint paint) {
         //canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
@@ -299,7 +298,8 @@ class Snake extends GameObject implements GameObserver{
             }
         }
     }
-    private void draw(Canvas canvas, Paint paint, int direction){   //0 = right, 1 = left, 2=up, 3=down
+
+    private void draw(Canvas canvas, Paint paint, int direction) {   //0 = right, 1 = left, 2=up, 3=down
         canvas.drawBitmap(mBitmapHeads.get(direction),
                 segmentLocations.get(0).x
                         * mSegmentSize,
@@ -307,7 +307,7 @@ class Snake extends GameObject implements GameObserver{
                         * mSegmentSize, paint);
     }
 
-    public void setGif(Context context){
+    public void setGif(Context context) {
         snakeHead = headGif[index];
         snakeBody = bodyGif[index];
 
@@ -315,11 +315,11 @@ class Snake extends GameObject implements GameObserver{
         createBody(context, mSegmentSize);
 
         index++;
-        if(index > 2)
+        if (index > 2)
             index = 0;
     }
 
-    public void setNormal(Context context){
+    public void setNormal(Context context) {
         snakeHead = R.drawable.head;
         snakeBody = R.drawable.body;
 
@@ -327,15 +327,18 @@ class Snake extends GameObject implements GameObserver{
         createBody(context, mSegmentSize);
     }
 
+    public void setSpeed(int speed) {
+        mSnakeSpeed = speed;
+    }
 
     // Handle changing direction
-    void switchHeading(MotionEvent motionEvent, ControlButton cB) {
+    static void switchHeading(MotionEvent motionEvent, ControlButton cB, KeyEvent keyEvent) {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
 
         char direction = cB.buttonRange(motionEvent);
 
-        switch (direction){
+        switch (direction) {
             case 'u':
                 rotateUp();
                 break;
@@ -349,30 +352,52 @@ class Snake extends GameObject implements GameObserver{
                 rotateRight();
                 break;
         }
+        if (keyEvent != null) {
+            int keyCode = keyEvent.getKeyCode();
+
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_A:
+                    rotateLeft();
+                    break;
+                case KeyEvent.KEYCODE_D:
+                    rotateRight();
+                    break;
+                case KeyEvent.KEYCODE_W:
+                    rotateUp();
+                    break;
+                case KeyEvent.KEYCODE_S:
+                    rotateDown();
+                    break;
+            }
+        }
     }
-    private void rotateUp() {
+
+
+    static void rotateUp() {
         if (heading != Heading.DOWN) {
             heading = Heading.UP;
         }
-
     }
-    private void rotateDown(){
+
+    static void rotateDown() {
         if (heading != Heading.UP) {
             heading = Heading.DOWN;
         }
-
     }
-    private void rotateRight() {
 
-        if (heading !=Heading.LEFT){
+    static void rotateRight() {
+
+        if (heading != Heading.LEFT) {
             heading = Heading.RIGHT;
-       }
-
+        }
     }
-    private void rotateLeft() {
-        if (heading !=Heading.RIGHT) {
+
+    static void rotateLeft() {
+        if (heading != Heading.RIGHT) {
             heading = Heading.LEFT;
         }
-
-        }
     }
+
+
+}
+

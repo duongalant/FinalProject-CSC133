@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.view.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,4 +43,6 @@ public class GameObject {
                 location.x * mSize, location.y * mSize, paint);
 
     }
+
+
 }
