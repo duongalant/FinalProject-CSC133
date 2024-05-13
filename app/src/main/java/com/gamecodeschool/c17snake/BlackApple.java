@@ -23,7 +23,6 @@ public class BlackApple extends GameObject implements Object {
         mBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.bapple);
         // Resize the bitmap
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
-
     }
 
     @Override
@@ -45,6 +44,5 @@ public class BlackApple extends GameObject implements Object {
     @Override
     public int effect(int mScore) {
         return mScore += 1;
-
     }
 }

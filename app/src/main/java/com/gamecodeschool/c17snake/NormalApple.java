@@ -11,8 +11,7 @@ public class NormalApple extends GameObject implements Object {
     private Point mSpawnRange;
     Random random;
 
-    /// Set up the apple in the constructors
-    NormalApple(Context context, Point sr, int s) {
+    public NormalApple(Context context, Point sr, int s) {
         random = new Random();
         // Make a note of the passed in spawn range
         mSpawnRange = sr;
