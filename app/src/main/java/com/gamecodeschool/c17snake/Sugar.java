@@ -80,6 +80,11 @@ public class Sugar extends GameObject implements ISpawnable{
     }
     public boolean isFriendly(){ return  friendly; }
 
+    @Override
+    public int benefit(int mScore) {
+        return 0;
+    }
+
     //when snake eat the sugar
     public int benefit(int mScore, long currentTime){
         location.x = -10;   //move it to outside of the screen

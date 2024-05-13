@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.view.KeyEvent;
 
 public class GameObject {
     protected Point location = new Point();
@@ -23,4 +24,6 @@ public class GameObject {
                 location.x * mSize, location.y * mSize, paint);
 
     }
+
+
 }
