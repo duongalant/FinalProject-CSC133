@@ -84,7 +84,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Sound Manager
         soundManager = SoundManager.getInstance(context);
         // Game State
-        gameState = new GameState();
+        gameState = GameState.getInstance();
         setObjects(context, size);
     }
 

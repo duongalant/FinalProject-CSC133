@@ -3,6 +3,7 @@ package com.gamecodeschool.c17snake;
 import android.content.Context;
 
 public class GameState {
+    private static GameState instance;
     // Game State
     private volatile boolean mPlaying; // Is the game currently playing?
     private volatile boolean mPaused ; // Is the game paused?
@@ -11,7 +12,7 @@ public class GameState {
     private volatile boolean dead; // Flag indicating player death
     private volatile boolean notInGame; // Flag indicating not in game
 
-    GameState() {
+    private GameState() {
         mPlaying = false;
         mPaused = true;
         gotReset = true;
@@ -19,6 +20,12 @@ public class GameState {
         dead = false;
         notInGame = true;
 
+    }
+    public static GameState getInstance() {
+        if(instance == null) {
+            instance = new GameState();
+        }
+        return instance;
     }
 
     boolean getPaused() {
