@@ -59,6 +59,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private ColdApple mColdApple; // Cold apple object
     private FastApple mFastApple; // Fast apple object
     private BlackApple mBlackApple; // Black apple object
+
     private Rock mRock; // Rock object
     private Rock[] rocks = new Rock[3]; // Array of rocks
     private Sugar mSugar; // Sugar object
@@ -263,6 +264,9 @@ class SnakeGame extends SurfaceView implements Runnable {
             mFastApple.spawn(mSnake.segmentLocations);
             mScore = mFastApple.effect(mScore);
             mSnakeSpeed = (FAST_SPEED);
+            if(mRock.moreSpawn(mScore)){
+                rocks[mRock.getIndex()].resetPosition();
+            }
             soundManager.playEatSound();
         }
 
@@ -308,8 +312,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         for(int i = 0; i < rocks.length; i++)
             checkRock(i);
-
-        if(mScore >= maxScore){
+        if(mScore >= maxScore) {
             mPaused = true;
             gotReset = true;
             winner = true;
