@@ -332,10 +332,7 @@ public class Snake extends GameObject{
     }
 
     // Handle changing direction
-    static void switchHeading(MotionEvent motionEvent, ControlButton cB, KeyEvent keyEvent) {
-        float x = motionEvent.getX();
-        float y = motionEvent.getY();
-
+    static void switchHeading(MotionEvent motionEvent, ControlButton cB) {
         char direction = cB.buttonRange(motionEvent);
 
         switch (direction) {
@@ -351,24 +348,6 @@ public class Snake extends GameObject{
             case 'r':
                 rotateRight();
                 break;
-        }
-        if (keyEvent != null) {
-            int keyCode = keyEvent.getKeyCode();
-
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_A:
-                    rotateLeft();
-                    break;
-                case KeyEvent.KEYCODE_D:
-                    rotateRight();
-                    break;
-                case KeyEvent.KEYCODE_W:
-                    rotateUp();
-                    break;
-                case KeyEvent.KEYCODE_S:
-                    rotateDown();
-                    break;
-            }
         }
     }
 

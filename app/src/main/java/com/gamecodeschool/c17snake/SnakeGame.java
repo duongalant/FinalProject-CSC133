@@ -241,6 +241,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             }
         }
 
+
         if (mIsBlackAppled) {
             long mBlackAppleCooldownStartTime = 5;
             if (System.currentTimeMillis() - mBlackAppleCooldownStartTime >= BLACK_APPLE_DURATION) {
@@ -254,6 +255,8 @@ class SnakeGame extends SurfaceView implements Runnable {
 
 
         //deltaTime / targetFPS
+
+
 
         // Did the head of the snake eat the apple?
         if(mSnake.checkDinner(mApple.getLocation())){
@@ -323,6 +326,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
 
 
+
         if(mScore == maxScore){
             mPaused =true;
             gotReset = true;
@@ -376,11 +380,9 @@ class SnakeGame extends SurfaceView implements Runnable {
             mPaint.setTextSize(120);
 
             mPaint.setTypeface(mAtariFont);
-          
-            if (notInGame) {
 
-                drawingText("Title", 500, 800); //change title
-            } else {
+            drawText();
+            if (!notInGame){
                 inGameDrawing();
                 //set the snake's look different when it eats sugar item
                 if (mSnake.isImmune(frameInSecond) && gifOn) {
@@ -391,16 +393,12 @@ class SnakeGame extends SurfaceView implements Runnable {
                     gifOn = false;
                 }
                 mSugar.checkSpawn(mSnake.segmentLocations, frameInSecond, mCanvas, mPaint);
-                drawText();
             }
             // Unlock the mCanvas and reveal the graphics for this frame
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);
         }
     }
     private void inGameDrawing() {
-        // Draw the score
-        drawingText("" + mScore, 20, 120);
-
         //mCanvas.drawText("Time: " + frameInSecond%100000, 20, 220, mPaint);    //for testing
 
         // Draw the objects
@@ -423,7 +421,12 @@ class SnakeGame extends SurfaceView implements Runnable {
     private void drawText(){
         mPaint.setColor(Color.argb(255, 0, 0, 0));
         // Draw some text while paused
-        if(mPaused){
+        if(notInGame){  //title
+            mPaint.setTextSize(200);
+            drawingText("Snake Game", mCanvas.getWidth()/8, mCanvas.getHeight()/2); //change title
+            mPaint.setTextSize(50);
+            drawingText("Click Anywhere to Start the Game", mCanvas.getWidth()/4 - 100, mCanvas.getHeight()/2 + 200);
+        }else if(mPaused){
             // Set the size and color of the mPaint for the text
             //mPaint.setColor(Color.argb(255, 255, 255, 255));  //redundancy
             // Draw our names
@@ -458,6 +461,10 @@ class SnakeGame extends SurfaceView implements Runnable {
                 mPaint.setTextSize(120);
                 drawingText(getResources().getString(R.string.tap_to_play), 100, 800);
             }
+        }else{
+            // Draw the score
+            mPaint.setTextSize(120);
+            drawingText("" + mScore, 20, 120);
         }
 
     }
@@ -506,7 +513,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         }else if(!mPaused){                                     //when the game is playing
             // Let the Snake class handle the input
-            mSnake.switchHeading(motionEvent, controlButton, keyEvent);
+            mSnake.switchHeading(motionEvent, controlButton);
         }
 
         // Don't want to process snake direction for this tap
