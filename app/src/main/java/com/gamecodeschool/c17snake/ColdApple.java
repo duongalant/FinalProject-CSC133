@@ -47,7 +47,7 @@ public class ColdApple extends GameObject implements ISpawnable {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
     @Override
-    public int affect(int mScore) {
+    public int effect(int mScore) {
         return mScore += 1;
     }
 

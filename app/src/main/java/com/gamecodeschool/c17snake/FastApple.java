@@ -49,7 +49,7 @@ public class FastApple extends GameObject implements ISpawnable {
     }
 
     @Override
-    public int affect(int mScore) {
+    public int effect(int mScore) {
         return mScore += 1;
 
     }

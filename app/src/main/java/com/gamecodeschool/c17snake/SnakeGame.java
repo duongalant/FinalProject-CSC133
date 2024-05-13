@@ -238,7 +238,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Did the head of the snake eat the apple?
         if(mSnake.checkDinner(mApple.getLocation())){
             mApple.spawn(mSnake.segmentLocations);
-            mScore = mApple.affect(mScore);
+            mScore = mApple.effect(mScore);
 
 
             if(mRock.moreSpawn(mScore)){
@@ -250,7 +250,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         if(mSnake.checkDinner(mColdApple.getLocation())){
             mColdApple.spawn(mSnake.segmentLocations);
-            mScore = mColdApple.affect(mScore);
+            mScore = mColdApple.effect(mScore);
 
             mIsSlowed = true;
             mCooldownStartTime = System.currentTimeMillis();
@@ -266,7 +266,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         if(mSnake.checkDinner(mFastApple.getLocation())) {
             mFastApple.spawn(mSnake.segmentLocations);
-            mScore = mFastApple.affect(mScore);
+            mScore = mFastApple.effect(mScore);
             mSnakeSpeed = (FAST_SPEED);
 
             if(mRock.moreSpawn(mScore)){
@@ -277,7 +277,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
 
         if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
-            mScore = mSugar.affect(mScore, frameInSecond);
+            mScore = mSugar.effect(mScore, frameInSecond);
             gifOn = true;
 
             if(mRock.moreSpawn(mScore)){
@@ -313,7 +313,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mRock.spawn(mSnake.segmentLocations);
 
             if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock.affect(mScore);
+                mScore = mRock.effect(mScore);
 
             soundManager.playCrashSound();
         }
@@ -322,7 +322,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             rocks[index].spawn(mSnake.segmentLocations);
 
             if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock.affect(mScore);
+                mScore = mRock.effect(mScore);
 
             soundManager.playCrashSound();
         }

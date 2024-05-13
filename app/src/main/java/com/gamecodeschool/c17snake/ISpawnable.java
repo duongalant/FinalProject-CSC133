@@ -15,5 +15,5 @@ public interface ISpawnable {
 
     void resetPosition();
 
-    int affect(int mScore);
+    int effect(int mScore);
 }

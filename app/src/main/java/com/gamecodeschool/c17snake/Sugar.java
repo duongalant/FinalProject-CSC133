@@ -79,9 +79,9 @@ public class Sugar extends GameObject implements ISpawnable{
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
-    public int affect(int mScore){return 0;}
+    public int effect(int mScore){return 0;}
 
-    public int affect(int mScore, long currentTime) {
+    public int effect(int mScore, long currentTime) {
         location.x = -10;   //move it to outside of the screen
         spawned = false;
         setNextSpawnTime(currentTime);

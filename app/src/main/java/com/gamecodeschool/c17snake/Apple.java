@@ -48,7 +48,7 @@ public class Apple extends GameObject implements ISpawnable{
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
-    public int affect(int mScore){
+    public int effect(int mScore){
 
         return mScore += 1;
     }
