@@ -75,7 +75,6 @@ class SnakeGame extends SurfaceView implements Runnable {
     private ExitButton exitButton;
     private KeyEvent keyEvent;
 
-
     private final int NORMAL_SPEED = 1;
     private final int FAST_SPEED = 3;
     private final double SLOWED_SPEED = 0.1; // Adjust as needed
@@ -84,7 +83,6 @@ class SnakeGame extends SurfaceView implements Runnable {
     private boolean mIsSlowed = false;
     private boolean mIsFast = true;
     private long mCooldownStartTime = 0;
-
     // This is the constructor method that gets called
     // from SnakeActivity
     public SnakeGame(Context context, Point size) {
