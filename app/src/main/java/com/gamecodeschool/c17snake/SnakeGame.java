@@ -312,8 +312,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
             mRock.spawn(mSnake.segmentLocations);
 
-            if(!mSnake.isImmune(frameInSecond))
+            if(!mSnake.isImmune(frameInSecond)){
                 mScore = mRock.effect(mScore);
+                mSnake.segmentLocations.get(0).x = -10;
+            }
 
             soundManager.playCrashSound();
         }
@@ -321,8 +323,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         if(mSnake.checkEnemy(rocks[index].getLocation(), frameInSecond)){
             rocks[index].spawn(mSnake.segmentLocations);
 
-            if(!mSnake.isImmune(frameInSecond))
+            if(!mSnake.isImmune(frameInSecond)){
                 mScore = mRock.effect(mScore);
+                mSnake.segmentLocations.get(0).x = -10;
+            }
 
             soundManager.playCrashSound();
         }
