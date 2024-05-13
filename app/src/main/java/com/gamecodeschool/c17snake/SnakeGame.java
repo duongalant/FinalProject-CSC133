@@ -51,7 +51,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private ColdApple mColdApple; // Cold apple object
     private FastApple mFastApple; // Fast apple object
     private BlackApple mBlackApple; // Black apple object
-
+    private Mole mMole; // Mole object
     private Rock mRock; // Rock object
     private Rock[] rocks = new Rock[3]; // Array of rocks
     private Sugar mSugar; // Sugar object
@@ -103,6 +103,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mFastApple = (FastApple) GameObjectFactory.createObject(context, GameObjectFactory.ObjectType.FAST_APPLE, mScreenRange, mBlockSize);
         mBlackApple = (BlackApple) GameObjectFactory.createObject(context, GameObjectFactory.ObjectType.BLACK_APPLE, mScreenRange, mBlockSize);
         mRock = (Rock) GameObjectFactory.createObject(context, GameObjectFactory.ObjectType.ROCK, mScreenRange, mBlockSize);
+        mMole = (Mole) GameObjectFactory.createObject(context, GameObjectFactory.ObjectType.MOLE, mScreenRange, mBlockSize);
         for(int i = 0; i < rocks.length; i++) {
             rocks[i] = new Rock(context, mScreenRange, mBlockSize);
         }
@@ -129,6 +130,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mFastApple.spawn();
         mBlackApple.spawn();
         mRock.spawn();
+        mMole.spawn();
         for(int i = 1; i < rocks.length; i++){
             rocks[i].location.x = -10;
         }
@@ -214,7 +216,17 @@ class SnakeGame extends SurfaceView implements Runnable {
                 mSnakeSpeed = NORMAL_SPEED;
             }
         }
+        // Update the mole
+        //deltaTime / targetFPS
+        mMole.update(10 / 10, getHeight()); // Pass the screen height to the mole
+        if(mSnake.checkEnemy(mMole.getLocation(), frameInSecond)){
+            mMole.spawn(mSnake.segmentLocations);
 
+            if(!mSnake.isImmune(frameInSecond))
+                mScore = mMole.effect(mScore);
+
+            soundManager.playCrashSound();
+        }
 
         if (mIsBlackAppled) {
             long mBlackAppleCooldownStartTime = 5;
@@ -374,6 +386,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         mBlackApple.draw(mCanvas,mPaint);
         mSnake.draw(mCanvas, mPaint);
         mRock.draw(mCanvas, mPaint);
+        mMole.draw(mCanvas, mPaint);
         for (int i = 0; i < rocks.length; i++)
             rocks[i].draw(mCanvas, mPaint);
         mSugar.draw(mCanvas, mPaint);

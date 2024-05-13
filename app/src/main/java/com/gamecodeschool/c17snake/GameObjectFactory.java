@@ -16,6 +16,8 @@ public class GameObjectFactory {
                 return new BlackApple(context, sr, s);
             case ROCK:
                 return new Rock(context, sr, s);
+            case MOLE:
+                return new Mole(context, sr, s);
             case SUGAR:
                 return new Sugar(context, sr, s);
             default:
@@ -28,6 +30,7 @@ public class GameObjectFactory {
         FAST_APPLE,
         BLACK_APPLE,
         ROCK,
+        MOLE,
         SUGAR
     }
 }
