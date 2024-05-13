@@ -55,7 +55,6 @@ public class ColdApple extends GameObject implements ISpawnable {
     }
     @Override
     public int benefit(int mScore) {
-        
         return mScore += 1;
 
     }

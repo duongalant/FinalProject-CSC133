@@ -18,7 +18,7 @@ import com.gamecodeschool.c17snake.Buttons.UpButton;
 
 import java.util.ArrayList;
 
-public class Snake extends GameObject{
+public class Snake extends GameObject {
 
     // The location in the grid of all the segments
     public ArrayList<Point> segmentLocations;
@@ -32,8 +32,6 @@ public class Snake extends GameObject{
     // Where is the centre of the screen
     // horizontally in pixels?
     private boolean dead = false;
-
-
 
     // For tracking movement Heading
     private enum Heading {

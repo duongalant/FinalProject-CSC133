@@ -31,6 +31,7 @@ public class Apple extends GameObject implements ISpawnable{
 
         // Resize the bitmap
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
+
     }
 
     @Override
@@ -41,7 +42,9 @@ public class Apple extends GameObject implements ISpawnable{
         //if apple is spawned in the snake
         while(InSnake.checkSpot(segmentLocations, location, -1)){
             resetPosition();
+
         }
+
     }
 
     public void resetPosition(){
@@ -56,7 +59,8 @@ public class Apple extends GameObject implements ISpawnable{
     }
 
     public int benefit(int mScore){
-
         return mScore += 1;
+
     }
+
 }

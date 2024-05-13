@@ -84,5 +84,6 @@ public class Rock extends GameObject implements ISpawnable {
 
     public int penalty(int mScore){
         return mScore -= 1;
+
     }
 }

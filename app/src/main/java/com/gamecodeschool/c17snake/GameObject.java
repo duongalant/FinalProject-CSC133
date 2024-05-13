@@ -10,22 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject {
-    private List<GameObserver> observers = new ArrayList<>();
-    // Method to subscribe an observer
-    public void addObserver(GameObserver observer) {
-        observers.add(observer);
-    }
-    // Method to notify observers when an event occurs
-    protected void notifyAppleEaten() {
-        for (GameObserver observer : observers) {
-            observer.onAppleEaten();
-        }
-    }
-    protected void notifyObstacleCollision() {
-        for (GameObserver observer : observers) {
-            observer.onObstacleCollision();
-        }
-    }
     protected Point location = new Point();
 
     public int mSize;
