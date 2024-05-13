@@ -78,15 +78,10 @@ public class Sugar extends GameObject implements ISpawnable{
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
-    public boolean isFriendly(){ return  friendly; }
 
-    @Override
-    public int benefit(int mScore) {
-        return 0;
-    }
+    public int affect(int mScore){return 0;}
 
-    //when snake eat the sugar
-    public int benefit(int mScore, long currentTime){
+    public int affect(int mScore, long currentTime) {
         location.x = -10;   //move it to outside of the screen
         spawned = false;
         setNextSpawnTime(currentTime);

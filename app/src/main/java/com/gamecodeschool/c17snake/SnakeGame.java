@@ -169,6 +169,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     }
 
 
+
     // Handles the game loop
     @Override
     public void run() {
@@ -237,7 +238,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         // Did the head of the snake eat the apple?
         if(mSnake.checkDinner(mApple.getLocation())){
             mApple.spawn(mSnake.segmentLocations);
-            mScore = mApple.benefit(mScore);
+            mScore = mApple.affect(mScore);
 
 
             if(mRock.moreSpawn(mScore)){
@@ -249,11 +250,15 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         if(mSnake.checkDinner(mColdApple.getLocation())){
             mColdApple.spawn(mSnake.segmentLocations);
-            mScore = mColdApple.benefit(mScore);
+            mScore = mColdApple.affect(mScore);
 
             mIsSlowed = true;
             mCooldownStartTime = System.currentTimeMillis();
             mSnakeSpeed = (int) (SLOWED_SPEED * NORMAL_SPEED);
+
+            if(mRock.moreSpawn(mScore)){
+                rocks[mRock.getIndex()].resetPosition();
+            }
 
             soundManager.playEatSound();
 
@@ -261,21 +266,23 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         if(mSnake.checkDinner(mFastApple.getLocation())) {
             mFastApple.spawn(mSnake.segmentLocations);
-            mScore = mFastApple.benefit(mScore);
+            mScore = mFastApple.affect(mScore);
             mSnakeSpeed = (FAST_SPEED);
-
-            soundManager.playEatSound();
-
-        }
-
-        if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
-            mScore = mSugar.benefit(mScore, frameInSecond);
-            gifOn = true;
 
             if(mRock.moreSpawn(mScore)){
                 rocks[mRock.getIndex()].resetPosition();
             }
 
+            soundManager.playEatSound();
+        }
+
+        if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
+            mScore = mSugar.affect(mScore, frameInSecond);
+            gifOn = true;
+
+            if(mRock.moreSpawn(mScore)){
+                rocks[mRock.getIndex()].resetPosition();
+            }
 
             soundManager.playSugarSound();
         }
@@ -283,7 +290,7 @@ class SnakeGame extends SurfaceView implements Runnable {
         for(int i = 0; i < rocks.length; i++)
             checkRock(i);
 
-        if(mScore == maxScore){
+        if(mScore >= maxScore){
             mPaused =true;
             gotReset = true;
             winner = true;
@@ -306,7 +313,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             mRock.spawn(mSnake.segmentLocations);
 
             if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock.penalty(mScore);
+                mScore = mRock.affect(mScore);
 
             soundManager.playCrashSound();
         }
@@ -315,7 +322,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             rocks[index].spawn(mSnake.segmentLocations);
 
             if(!mSnake.isImmune(frameInSecond))
-                mScore = mRock.penalty(mScore);
+                mScore = mRock.affect(mScore);
 
             soundManager.playCrashSound();
         }
@@ -377,8 +384,9 @@ class SnakeGame extends SurfaceView implements Runnable {
         mPaint.setColor(Color.argb(255, 0, 0, 0));
         // Draw some text while paused
         if(notInGame){  //title
-            mPaint.setTextSize(200);
-            drawingText("Snake Game", mCanvas.getWidth()/8, mCanvas.getHeight()/2); //change title
+            mPaint.setTextSize(150);
+            drawingText("Sugaraddict", mCanvas.getWidth()/6, mCanvas.getHeight()/3 + 50);
+            drawingText("Snake", mCanvas.getWidth()/3, mCanvas.getHeight()/3 + 250);
             mPaint.setTextSize(50);
             drawingText("Click Anywhere to Start the Game", mCanvas.getWidth()/4 - 100, mCanvas.getHeight()/2 + 200);
         }else if(mPaused){

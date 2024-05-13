@@ -7,7 +7,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-public class LeftButton {
+public class LeftButton{
     private int left;
     private int top;
     private int right;

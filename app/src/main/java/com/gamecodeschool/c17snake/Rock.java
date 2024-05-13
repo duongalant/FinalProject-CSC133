@@ -11,8 +11,6 @@ import java.util.Random;
 public class Rock extends GameObject implements ISpawnable {
     // The range of values we can choose from
     // to spawn a rock
-
-    private boolean friendly = false;
     private Point mSpawnRange;
     Random random;
 
@@ -72,17 +70,7 @@ public class Rock extends GameObject implements ISpawnable {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
-    public boolean isFriendly(){
-        return friendly;
-    }
-
-    @Override
-    public int benefit(int mScore) {
-
-        return 0;
-    }
-
-    public int penalty(int mScore){
+    public int affect(int mScore){
         return mScore -= 1;
     }
 }

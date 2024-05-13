@@ -15,7 +15,5 @@ public interface ISpawnable {
 
     void resetPosition();
 
-    boolean isFriendly();
-
-    int benefit(int mScore);
+    int affect(int mScore);
 }

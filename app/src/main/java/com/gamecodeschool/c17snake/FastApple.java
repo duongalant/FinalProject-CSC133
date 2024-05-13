@@ -9,12 +9,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class FastApple extends GameObject implements ISpawnable {
-    private boolean friendly = true;
-    private int currentIndex = 0;
-    private int nextScore = 2;
     private ISpawnable apple;
     private Point mSpawnRange;
-    private SnakeGame mSnakeGame;
 
     Random random;
 
@@ -52,30 +48,10 @@ public class FastApple extends GameObject implements ISpawnable {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
-
-    public boolean isFriendly() {
-        return friendly;
-    }
     @Override
-    public int benefit(int mScore) {
+    public int affect(int mScore) {
         return mScore += 1;
 
-    }
-
-    public void reset(){
-
-        currentIndex = 0;
-    }
-    public boolean moreSpawn(int score){
-        if(score >= nextScore){
-            nextScore += 2;
-            currentIndex++;
-            return true;
-        }
-        return false;
-    }
-    public int getIndex(){
-        return currentIndex;
     }
 }
 

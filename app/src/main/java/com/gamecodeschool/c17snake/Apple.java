@@ -11,8 +11,6 @@ import java.util.Random;
 public class Apple extends GameObject implements ISpawnable{
     // The range of values we can choose from
     // to spawn an apple
-
-    private boolean friendly = true;
     private Point mSpawnRange;
     Random random;
     /// Set up the apple in the constructor
@@ -50,12 +48,7 @@ public class Apple extends GameObject implements ISpawnable{
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
-    public boolean isFriendly(){
-
-        return friendly;
-    }
-
-    public int benefit(int mScore){
+    public int affect(int mScore){
 
         return mScore += 1;
     }
