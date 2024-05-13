@@ -4,6 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+
+import com.gamecodeschool.c17snake.GameObject;
+import com.gamecodeschool.c17snake.InSnake;
+import com.gamecodeschool.c17snake.Object;
+import com.gamecodeschool.c17snake.R;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,7 +38,6 @@ public class FastApple extends GameObject implements Object {
     @Override
     public void spawn() {
         resetPosition();
-
     }
     @Override
     public void spawn(ArrayList<Point> segmentLocations) {
