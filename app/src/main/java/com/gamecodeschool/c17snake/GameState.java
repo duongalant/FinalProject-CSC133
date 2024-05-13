@@ -19,8 +19,8 @@ public class GameState {
         winner = false;
         dead = false;
         notInGame = true;
-
     }
+
     public static GameState getInstance() {
         if(instance == null) {
             instance = new GameState();
@@ -80,7 +80,7 @@ public class GameState {
         mPaused =false;
         gotReset = false;
     }
-    void notWinnerDead(){
+    void notWinnerDead() {
         winner = false;
         dead = false;
     }

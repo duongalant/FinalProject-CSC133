@@ -7,19 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
-
 import com.gamecodeschool.c17snake.Buttons.ControlButton;
-import com.gamecodeschool.c17snake.Buttons.DownButton;
-import com.gamecodeschool.c17snake.Buttons.LeftButton;
-import com.gamecodeschool.c17snake.Buttons.RightButton;
-import com.gamecodeschool.c17snake.Buttons.UpButton;
-
 import java.util.ArrayList;
 
 public class Snake extends GameObject{
-
     // The location in the grid of all the segments
     public ArrayList<Point> segmentLocations;
 
@@ -32,8 +24,6 @@ public class Snake extends GameObject{
     // Where is the centre of the screen
     // horizontally in pixels?
     private boolean dead = false;
-
-
 
     // For tracking movement Heading
     private enum Heading {
@@ -54,14 +44,6 @@ public class Snake extends GameObject{
     private int[] bodyGif = new int[3];
     private int index;
     private long duration;      //duration of immunity
-
-    private UpButton upButton;
-    private DownButton downButton;
-    private LeftButton leftButton;
-    private RightButton rightButton;
-    private int mSnakeSpeed;
-
-
 
     Snake(Context context, Point mr, int ss) {
         // Initialize our ArrayList
@@ -87,14 +69,6 @@ public class Snake extends GameObject{
 
         createHead(context, ss);
         createBody(context, ss);
-
-        // The halfway point across the screen in pixels
-        // Used to detect which side of screen was pressed
-
-        //upButton = new UpButton(155, 1040,255,1140);
-        //downButton = new DownButton(155,1285,255,1385);
-        //rightButton = new RightButton(265,1160,365,1260);
-        //leftButton = new LeftButton(50,1160,150,1260);
 
         duration = -1;
     }
@@ -151,21 +125,17 @@ public class Snake extends GameObject{
         duration = -1;
     }
 
-
     void move() {
         // Move the body
         // Start at the back and move it
         // to the position of the segment in front of it
         for (int i = segmentLocations.size() - 1; i > 0; i--) {
-
             // Make it the same value as the next segment
             // going forwards towards the head
             segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
             segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
         }
         movingHead();
-    
-
     }
 
     private void movingHead() {
@@ -231,9 +201,7 @@ public class Snake extends GameObject{
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
-
             segmentLocations.add(new Point(-10, -10));
-
             getImmune(currentTime);
             return true;
         }
@@ -264,11 +232,7 @@ public class Snake extends GameObject{
 
     //@Override
     public void draw(Canvas canvas, Paint paint) {
-        //canvas.drawText("Immune: " + duration%100000, 20, 430, paint);   //for testing   -- immunity duration
-
-        // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
-            // All the code from this method goes here
             // Draw the head
             switch (heading) {
                 case RIGHT:
@@ -287,7 +251,6 @@ public class Snake extends GameObject{
                     draw(canvas, paint, 3);     //down
                     break;
             }
-
             // Draw the snake body one block at a time
             for (int i = 1; i < segmentLocations.size(); i++) {
                 canvas.drawBitmap(mBitmapBody,
@@ -310,10 +273,8 @@ public class Snake extends GameObject{
     public void setGif(Context context) {
         snakeHead = headGif[index];
         snakeBody = bodyGif[index];
-
         createHead(context, mSegmentSize);
         createBody(context, mSegmentSize);
-
         index++;
         if (index > 2)
             index = 0;
@@ -322,19 +283,13 @@ public class Snake extends GameObject{
     public void setNormal(Context context) {
         snakeHead = R.drawable.head;
         snakeBody = R.drawable.body;
-
         createHead(context, mSegmentSize);
         createBody(context, mSegmentSize);
-    }
-
-    public void setSpeed(int speed) {
-        mSnakeSpeed = speed;
     }
 
     // Handle changing direction
     static void switchHeading(MotionEvent motionEvent, ControlButton cB) {
         char direction = cB.buttonRange(motionEvent);
-
         switch (direction) {
             case 'u':
                 rotateUp();
@@ -351,7 +306,6 @@ public class Snake extends GameObject{
         }
     }
 
-
     static void rotateUp() {
         if (heading != Heading.DOWN) {
             heading = Heading.UP;
@@ -365,7 +319,6 @@ public class Snake extends GameObject{
     }
 
     static void rotateRight() {
-
         if (heading != Heading.LEFT) {
             heading = Heading.RIGHT;
         }
@@ -376,7 +329,6 @@ public class Snake extends GameObject{
             heading = Heading.LEFT;
         }
     }
-
 
 }
 

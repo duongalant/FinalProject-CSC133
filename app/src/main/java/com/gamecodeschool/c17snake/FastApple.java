@@ -4,22 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-
-import com.gamecodeschool.c17snake.GameObject;
-import com.gamecodeschool.c17snake.InSnake;
-import com.gamecodeschool.c17snake.Object;
-import com.gamecodeschool.c17snake.R;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 public class FastApple extends GameObject implements Object {
     private Point mSpawnRange;
     Random random;
-    /*
-    private int currentIndex = 0;
-    private int nextScore = 2;
-     */
 
     public FastApple(Context context, Point sr, int s) {
         random = new Random();
@@ -51,6 +41,7 @@ public class FastApple extends GameObject implements Object {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
 
+    @Override
     public int effect(int mScore) {
         return mScore += 1;
     }

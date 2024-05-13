@@ -41,7 +41,6 @@ public class Sugar extends GameObject implements Object {
 
     // After a certain amount of time, it spawns
     public void checkSpawn(ArrayList<Point> segmentLocations, long currentTime) {
-
         if(spawnTime(currentTime) && !spawned) {
             spawn(segmentLocations);
             setNextSpawnTime(currentTime);
