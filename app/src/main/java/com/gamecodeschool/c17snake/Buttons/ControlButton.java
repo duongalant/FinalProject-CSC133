@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-public class ControlButton {
+public class ControlButton implements ControlButtonBuilder{
     private Rect buttonRect;
 
     private int left;

@@ -282,17 +282,6 @@ class SnakeGame extends SurfaceView implements Runnable {
             mSnakeSpeed = NORMAL_SPEED;
         }
 
-
-        if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
-            mScore = mSugar.effect(mScore, frameInSecond);
-            gifOn = true;
-            if(mRock.moreSpawn(mScore)){
-                rocks[mRock.getIndex()].resetPosition();
-            }
-
-            soundManager.playEatSound();
-        }
-
         if(mSnake.checkSugar(mSugar.getLocation(), frameInSecond)){
             mScore = mSugar.effect(mScore, frameInSecond);
             gifOn = true;
@@ -321,8 +310,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)){
             mRock.spawn(mSnake.segmentLocations);
 
-            if(!mSnake.isImmune(frameInSecond))
+            if(!mSnake.isImmune(frameInSecond)){
+                mSnake.segmentLocations.get(0).x = -10;
                 mScore = mRock.effect(mScore);
+            }
 
             soundManager.playCrashSound();
         }
@@ -330,8 +321,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         if(mSnake.checkEnemy(rocks[index].getLocation(), frameInSecond)){
             rocks[index].spawn(mSnake.segmentLocations);
 
-            if(!mSnake.isImmune(frameInSecond))
+            if(!mSnake.isImmune(frameInSecond)) {
+                mSnake.segmentLocations.get(0).x = -10;
                 mScore = mRock.effect(mScore);
+            }
 
             soundManager.playCrashSound();
         }
