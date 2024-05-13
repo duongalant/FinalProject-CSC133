@@ -1,35 +1,32 @@
 package com.gamecodeschool.c17snake;
 
-import android.graphics.Point;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
+import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ColdApple extends GameObject implements ISpawnable {
-    private boolean friendly = true;
+public class ColdApple extends GameObject implements Object {
+    private Point mSpawnRange;
+    Random random;
+    /*
     private int currentIndex = 0;
     private int nextScore = 2;
-    private ISpawnable apple;
-    private Point mSpawnRange;
+     */
 
-    Random random;
-
-    public ColdApple(ISpawnable apple, Context context, Point sr, int s) {
-        super();
+    public ColdApple(Context context, Point sr, int s) {
         random = new Random();
-        this.apple = apple;
+        // Make a note of the passed in spawn range
         mSpawnRange = sr;
-        mSize = s;
-        mBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.capple);
         // Make a note of the size of an apple
-
+        mSize = s;
         // Hide the apple off-screen until the game starts
         location.x = -10;
+        // Load the image to the bitmap
+        mBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.capple);
+        // Resize the bitmap
         mBitmap = Bitmap.createScaledBitmap(mBitmap, s, s, false);
-
     }
 
     @Override
@@ -48,22 +45,11 @@ public class ColdApple extends GameObject implements ISpawnable {
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
     }
-
-
-    public boolean isFriendly() {
-        return friendly;
-    }
-    @Override
-    public int benefit(int mScore) {
-        
-        return mScore += 1;
-
-    }
-
-    public void reset(){
+    /*
+    public void reset() {
         currentIndex = 0;
     }
-    public boolean moreSpawn(int score){
+    public boolean moreSpawn(int score) {
         if(score >= nextScore){
             nextScore += 2;
             currentIndex++;
@@ -71,7 +57,11 @@ public class ColdApple extends GameObject implements ISpawnable {
         }
         return false;
     }
-    public int getIndex(){
+    public int getIndex() {
         return currentIndex;
+    }
+    */
+    public int effect(int mScore) {
+        return mScore += 1;
     }
 }
