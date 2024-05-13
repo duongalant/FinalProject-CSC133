@@ -3,13 +3,13 @@ package com.gamecodeschool.c17snake;
 import android.content.Context;
 
 public class GameState {
-    // Is the game currently playing and or paused?
-    private volatile boolean mPlaying;
-    private volatile boolean mPaused;
-    private volatile boolean gotReset;
-    private volatile boolean winner;
-    private volatile boolean dead;
-    private volatile boolean notInGame;
+    // Game State
+    private volatile boolean mPlaying; // Is the game currently playing?
+    private volatile boolean mPaused ; // Is the game paused?
+    private volatile boolean gotReset; // Flag for game reset
+    private volatile boolean winner; // Flag indicating player win
+    private volatile boolean dead; // Flag indicating player death
+    private volatile boolean notInGame; // Flag indicating not in game
 
     GameState() {
         mPlaying = false;
@@ -21,10 +21,10 @@ public class GameState {
 
     }
 
-    boolean paused() {
+    boolean getPaused() {
         return mPaused;
     }
-    boolean notPlaying() {
+    boolean getNotPlaying() {
         return mPlaying;
     }
     void setPlaying() {
@@ -32,6 +32,9 @@ public class GameState {
     }
     boolean getnotInGame() {
         return notInGame;
+    }
+    void setNotInGame() {
+        notInGame = true;
     }
     void inGame() {
         notInGame = false;
@@ -51,11 +54,11 @@ public class GameState {
     boolean getDead() {
         return dead;
     }
-    void reachMaxScore() {
+    void setReachMax() {
         setPauseResetTrue();
         winner = true;
     }
-    void snakeDied() {
+    void setSnakeDied() {
         setPauseResetTrue();
         dead = true;
     }
