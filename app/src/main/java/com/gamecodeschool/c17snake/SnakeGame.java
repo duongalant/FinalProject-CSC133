@@ -491,7 +491,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
     // Stop the thread
     public void pause() {
-        gameState.getNotPlaying();
+        gameState.setNotPlaying();
         try {
             mThread.join();
         } catch (InterruptedException e) {

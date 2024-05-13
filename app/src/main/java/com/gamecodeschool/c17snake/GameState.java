@@ -37,6 +37,9 @@ public class GameState {
     void setPlaying() {
         mPlaying = true;
     }
+    void setNotPlaying() {
+        mPlaying = false;
+    }
     boolean getnotInGame() {
         return notInGame;
     }
