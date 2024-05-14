@@ -201,8 +201,8 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         // Move the snake
         for (int i = 0; i < mSnakeSpeed; i++) {
-            if(mIsSlowed && frameInSecond%2 == 0) {
-                mSnake.move();
+            if(mIsSlowed && mNextFrameTime/100 % 2 == 0) {
+
             }else{
                 mSnake.move();
             }
