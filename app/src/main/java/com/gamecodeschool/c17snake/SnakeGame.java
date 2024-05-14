@@ -53,7 +53,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private FastApple mFastApple;
     private BlackApple mBlackApple;
     private Rock mRock;
-    private Rock[] rocks = new Rock[103];
+    private Rock[] rocks = new Rock[100];
     private Sugar mSugar;
     private PauseButton pauseButton;
     private ControlButton controlButton;
@@ -131,10 +131,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         mColdApple.spawn();
         mFastApple.spawn();
         mBlackApple.spawn();
-        mRock.spawn();
         for (int i = 1; i < rocks.length; i++) {
             rocks[i].location.x = -10;
         }
+        rocks[0].spawn();
 
         // Reset the snake
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -209,6 +209,7 @@ class SnakeGame extends SurfaceView implements Runnable {
                 // Cool down period has elapsed, revert to normal speed
                 mIsSlowed = false;
                 mSnakeSpeed = NORMAL_SPEED;
+                soundManager.startBackgroundMusic();
             }
         }
         if (mIsFast) {
@@ -217,6 +218,7 @@ class SnakeGame extends SurfaceView implements Runnable {
                 // Cool down period has elapsed, revert to normal speed
                 mIsFast = false;
                 mSnakeSpeed = NORMAL_SPEED;
+                soundManager.startBackgroundMusic();
             }
         }
 
@@ -289,6 +291,7 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         for(int i = 0; i < rocks.length; i++)
             checkRock(i);
+
         if(mScore >= MAX_SCORE) {
             gameState.setReachMax();
         }
@@ -302,17 +305,11 @@ class SnakeGame extends SurfaceView implements Runnable {
     }
 
     private void checkRock(int index){
-        if(mSnake.checkEnemy(mRock.getLocation(), frameInSecond)) {
-            mRock.spawn(mSnake.segmentLocations);
-            if (!mSnake.isImmune(frameInSecond)) {
-                mScore = mRock.effect(mScore);
-            }
-            soundManager.playCrashSound();
-        }
         if(mSnake.checkEnemy(rocks[index].getLocation(), frameInSecond)) {
             rocks[index].spawn(mSnake.segmentLocations);
             if(!mSnake.isImmune(frameInSecond)) {
                 mScore = mRock.effect(mScore);
+                mSnake.segmentLocations.get(0).x = -10;
             }
             soundManager.playCrashSound();
         }
