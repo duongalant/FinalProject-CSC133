@@ -53,7 +53,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private BlackApple mBlackApple; // Black apple object
 
     private Rock mRock; // Rock object
-    private Rock[] rocks = new Rock[3]; // Array of rocks
+    private Rock[] rocks = new Rock[103]; // Array of rocks
     private Sugar mSugar; // Sugar object
     private PauseButton pauseButton; // Pause button object
     private ControlButton controlButton; // Control button object
@@ -201,8 +201,8 @@ class SnakeGame extends SurfaceView implements Runnable {
 
         // Move the snake
         for (int i = 0; i < mSnakeSpeed; i++) {
-            if(mIsSlowed && frameInSecond%2 == 0) {
-                mSnake.move();
+            if(mIsSlowed && mNextFrameTime/100 % 2 == 0) {
+
             }else{
                 mSnake.move();
             }
@@ -314,7 +314,6 @@ class SnakeGame extends SurfaceView implements Runnable {
                 mSnake.segmentLocations.get(0).x = -10;
                 mScore = mRock.effect(mScore);
             }
-
             soundManager.playCrashSound();
         }
 
@@ -325,7 +324,6 @@ class SnakeGame extends SurfaceView implements Runnable {
                 mSnake.segmentLocations.get(0).x = -10;
                 mScore = mRock.effect(mScore);
             }
-
             soundManager.playCrashSound();
         }
     }
