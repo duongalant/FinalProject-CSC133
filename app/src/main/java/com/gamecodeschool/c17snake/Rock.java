@@ -50,7 +50,7 @@ public class Rock extends GameObject implements Object {
 
     public boolean moreSpawn(int score) {
         if(score >= nextScore){
-            nextScore += 3;
+            nextScore += 2;
             currentIndex++;
             return true;
         }

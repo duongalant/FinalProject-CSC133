@@ -185,7 +185,6 @@ public class Snake extends GameObject{
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
-
             // Add a new Point to the list
             // located off-screen.
             // This is OK because on the next call to
@@ -202,6 +201,10 @@ public class Snake extends GameObject{
         if (segmentLocations.get(0).x == l.x &&
                 segmentLocations.get(0).y == l.y) {
             segmentLocations.add(new Point(-10, -10));
+            segmentLocations.add(new Point(-20, -20));
+            segmentLocations.add(new Point(-30, -30));
+            segmentLocations.add(new Point(-40, -40));
+            segmentLocations.add(new Point(-50, -50));
             getImmune(currentTime);
             return true;
         }

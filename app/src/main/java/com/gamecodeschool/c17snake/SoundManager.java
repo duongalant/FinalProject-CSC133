@@ -18,6 +18,8 @@ public class SoundManager {
     private int crashSoundId;
     private int deathSoundId;
     private int sugarSoundId;
+    private int coldSoundId;
+    private int fastSoundId;
 
     private SoundManager(Context context) {
         // Initialize background music
@@ -52,6 +54,10 @@ public class SoundManager {
 
             descriptor = assetManager.openFd("sugar_power.ogg");
             sugarSoundId = soundPool.load(descriptor, 0);
+            descriptor = assetManager.openFd("cold_apple.ogg");
+            coldSoundId = soundPool.load(descriptor, 0);
+            descriptor = assetManager.openFd("fast_apple.ogg");
+            fastSoundId = soundPool.load(descriptor, 0);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,5 +103,15 @@ public class SoundManager {
     public void playSugarSound() {
         stopBackgroundMusic();
         soundPool.play(sugarSoundId, 1, 1, 0, 0, 1);
+    }
+
+    public void playColdSound() {
+        stopBackgroundMusic();
+        soundPool.play(coldSoundId, 1, 1, 0, 0, 1);
+    }
+
+    public void playFastSound() {
+        stopBackgroundMusic();
+        soundPool.play(fastSoundId, 1, 1, 0, 0, 1);
     }
 }
